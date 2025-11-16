@@ -52,13 +52,17 @@ class CustomUserSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         
-        # Create StudentProfile if name and phone are provided
+        # Create or update StudentProfile if name and phone are provided
+        # A post_save signal also creates a StudentProfile on user creation,
+        # so use get_or_create/update to avoid UNIQUE constraint errors.
         if name and phone:
-            StudentProfile.objects.create(
+            StudentProfile.objects.update_or_create(
                 user=user,
-                full_name=name,
-                phone=phone,
-                cgpa=cgpa,
+                defaults={
+                    "full_name": name,
+                    "phone": phone,
+                    "cgpa": cgpa,
+                },
             )
         
         return user
