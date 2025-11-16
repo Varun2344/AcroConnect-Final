@@ -1,0 +1,1956 @@
+“ACRO -CONNECT ” 
+ 
+A Major Project Report Submitted to 
+Rajiv  Gandhi  Proudyogiki  Vishwavidyalaya  
+ 
+ 
+ 
+ 
+Towards  Partial  Fulfillment  for the Award  of 
+Bachelor of Technology  
+In 
+Computer  Science  & Information Technology  
+ 
+ 
+Submitted  by: Guided  by: 
+Varun Purohit  (0827CI221148)  Prof.Nidhi  Nigam  
+Varun Bhaisare  (0827CI221147)  Prof.Ashwinee  Gadwal  
+Mohd. Ayan Mansuri  (0827CI221 093) CSIT  Department  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Acropolis  Institute  of Technology  & Research,  Indore 
+July- Dec 2025  
+
+
+DEPARTMENT  OF COMPUTER  SCIENCE  
+& INFORMATION  TECHNOLOGY  
+I  
+  
+ 
+2022 -2026  
+ 
+DECLARATION  
+ 
+We hereby declare that the work presented in this project, entitled  
+“AcroConnect -The-AITR -Placement -Readiness -Platform" , in partial 
+fulfillment of the requirements for the award of the degree of Bachelor of 
+Technology in Computer Science and Information Technology , is an 
+authentic record of the work carried out by us.  
+ 
+ 
+ 
+Place:  CSIT, 
+Indore  Date : Group  Members:  
+ 
+Varun Purohit 
+0827CI221148  
+ 
+ 
+Varun  Bhaisare 
+0827CI221147  
+ 
+ 
+Ayaan Mansuri  
+0827CI221 092 
+
+
+DEPARTMENT  OF COMPUTER  SCIENCE 
+& INFORMATION TECHNOLOGY  
+II  
+  
+ 
+2022 -2026  
+ 
+RECOMMENDATION  
+ 
+ 
+This is to certify that the work embodied in this project, entitled 
+“AcroConnect -The-AITR -Placement -Readiness -Platform ”, submitted 
+by Varun Purohit (0827CI2211 48), Varun Bhaisare  (082CI2211 47), and 
+Ayaan Mansuri (0827CI221 093), is a satisfactory account of the bonafide 
+work carried out under the supervision of Prof. Nidhi Nigam and Prof. 
+Ashwinee Gadwal.  
+This project is recommended for partial fulfillment of the requirements for 
+the award of the degree of Bachelor of Technology in Computer Science  & 
+Information Technology by Rajiv Gandhi Proudyogiki Vishwavidyalaya, 
+Bhopal.  
+ 
+Project  Guide:  Project  Coordinator:  
+ 
+Prof.Nidhi  Nigam  Prof.  Nidhi  Nigam  
+Prof.  Ashwinee  Gadwal  Prof.  Ashwinee  Gadwal  
+CSIT  Department  CSIT  Department  
+
+
+DEPARTMENT  OF COMPUTER  SCIENCE 
+& INFORMATION TECHNOLOGY  
+III  
+  
+2022 -2026  
+ 
+ 
+CERTIFICATE  
+ 
+ 
+The Project entitled “AcroConnect -The-AITR -Placement -Readiness -
+Platform ” submitted by Varun Purohit (0827CI221148), Varun Bhaisare 
+(082CI221147), and Ayaan Mansuri (0827CI221 093), has been examined 
+and is hereby approved towards partial fulfi llment for the award  of Bachelor 
+of Technology in Computer Science & Information Technology, for which 
+it has been submitted. It is understood that by this approval the undersigned 
+do not necessarily endorse or approve any statement made, opinion expressed  
+or conclusion  drawn  therein,  but approve the project only for the purpose for 
+which it has been submitted.  
+ 
+Internal  Examiner:  
+ 
+Prof. Nidhi Nigam 
+Prof.  Ashwinee  Gadwal  
+ 
+Date:  
+
+
+DEPARTMENT  OF COMPUTER  SCIENCE  & 
+INFORMATION TECHNOLOGY  
+IV  
+  
+ 
+2022 -2026  
+ 
+STUDENT  UNDERTAKING  
+ 
+ 
+This is to certify  that the project entitled  “AcroConnect -The-AITR -Placement -
+Readiness -Platform ” has been developed by us under the supervision of Prof. 
+Nidhi Nigam and Prof. Ashwinee Gadwal . The entire responsibility for the 
+work done in this project lies with us. The sole intention of this work is for 
+practical learning and research purposes only.  
+We further declare that to the best of our knowledge, this report does not  contain 
+any part of any w ork that has been submitted for the award of any degree, either 
+in this University or in any other University/Deemed University, without proper 
+citation. If any such instance is found, we are liable to provide  an explanation for 
+the same.  
+ 
+Varun Purohit  Varun Bhaisare  Ayaan Mansuri  
+(0827CI2211 48) (0827CI2211 47) (0827CI221 093) 
+ 
+ 
+Date:  Date:  Date:  
+
+
+ACKNOWLEDGEMENT  
+V  
+  
+We thank the almighty Lord for giving us the strength and courage to overcome 
+challenges and successfully complete this project.  We owe a deep sense of 
+gratitude, reverence, and respect to our mentor, Prof. Nidhi Nigam and Prof. 
+Ashwinee Gadwal CSIT Department, AITR, Indore, for their motivation, 
+sagacious guidan ce, constant encouragement, vigilant supervision, and valuable 
+critical appreciation  throughout  this project.  Their  support  has been  instrumental 
+in helping us complete the project on time.  
+We express our  profound  gratitude  and heartfelt  thanks  to Dr. Shil pa Bhalerao , 
+HOD CSIT, AITR Indore, for her unwavering support, insightful suggestions, 
+and inspiration in carrying out this project. We would also like to acknowledge 
+the guidance received from Prof. (Dr.) S. C. Sharma , Director, AITR, Indore, 
+whose advic e and assistance were invaluable whenever needed.  
+We take this opportunity to convey our sincere regards to the Management of 
+Acropolis Institute of Technology and Research , Indore, for extending 
+academic and administrative support and providing all necess ary facilities to help 
+us achieve our objectives.  
+Finally, we are deeply grateful to our parents and family members for their 
+unconditional love, support, and encouragement throughout the course of this 
+project.  
+ 
+ 
+Varun Purohit  Varun Bhaisare   Ayaan Mansuri  
+(0827CI2211 48) (0827CI2211 47) (0827CI221 093) 
+
+ 
+VII  
+ TABLE OF CONTENT  
+ 
+                  DECLARATION  I 
+RECOMMENDATION  II 
+CERTIFICATE  III 
+STUDENT UNDERTAKING  IV 
+ACKNOWLEDGEMENT  V 
+ABSTRACT  VI 
+TABLE  OF CONTENTS  VII 
+List of Figures  VIII 
+List of Tables  IX 
+Chapter  1: Introduction  1 
+1.1 Overview  2 
+1.2 Existing  System  2 
+1.3 Problem  Statement  2 
+1.4 Proposed  System  3 
+1.5 Need  and Scope  3 
+1.6 Report  Organization  4 
+Chapter  2: Literature  Survey  5 
+2.1 Study  6 
+2.2 Problem  Methodology  6 
+2.3 Software  Engineering  Paradigm  7 
+2.4 Software  Development  Life Cycle:  7 
+2.5 Technology  Methodology  8 
+2.5.1 Hardware  Requirements  8 
+2.5.2 Software  Requirements  8 
+Chapter  3: Analysis  9 
+3.1 Identification  of System  Requirements  10 
+3.2 Functional  Requirements  11 
+3.3 Non-Functional  Requirement  11 
+3.4 Feasibility  Study  12 
+3.4.1 Technical  Feasibility  12 
+
+ 
+VII  
+ 3.4.2 Financial  Feasibility  12 
+3.4.3 Operational  Feasibility  13 
+Chapter  4: Project  Planning  14 
+Chapter  5: Design  18 
+5.1 Introduction  to UML  19 
+5.2 UML  Diagrams  19 
+5.2.1 Use Case Diagram  19 
+5.2.2 Class  Diagram  21 
+5.2.2 Sequence  Diagram  22 
+5.2.3.  ER Diagram  23 
+5.2.4 Activity  Diagram  24 
+5.2.5 Table  Structure  25 
+Chapter  6: Implementation  26 
+6.1 Coding  (Main  Module)  27 
+6.2 Results  28 
+                     Chapter 7:  Testing  
+                         7.1 Testing  Objectives  
+                         7.2 Test Cases  
+Chapter  8: Conclusion  31 
+8.1Conclusion  32 
+8.2Future  work  32 
+8.3Summary  33 
+References  34 
+
+LIST  OF FIGURES  
+VII  
+  
+ 
+Figure  No. and Title  Page  No. 
+Figure  4.1 : System  Architecture  17 
+Figure  5.2.1  : Actor  20 
+Figure  5.2.2  : Use Case 20 
+Figure  5.2.3  : System  20 
+Figure  5.2.4  : Use Case  Diagram  20 
+Figure  5.2.5  : Class Diagram  21 
+Figure  5.2.6  : Sequence  Diagram  22 
+Figure  5.2.7  : ER- Diagram  23 
+Figure  5.2.8  : Activity  Diagram  24 
+Figure  6.1.1  : Main  Module  Table  27 
+Figure  6.2.1  : Home  Screen Table  28 
+Figure  6.2.2  : Login  Page  28 
+Figure  6.2.3  : Create  Account  Page 28 
+Figure  6.2.4  : Recommendations  Page  29 
+Figure  6.2.5:  Model  Training  Page  30 
+
+LIST  OF TABLES  
+IX  
+  
+ 
+Table  No. and Title  Page  No. 
+Table  2.5.1  : Hardware  Requirements  8 
+Table  2.5.2  : Software  Requirements  8 
+Table  3.1 : Functional  Requirements  11 
+Table  3.2 : Non-Functional  Requirements  11 
+Table  3.3 : Estimated  Cost 12 
+Table  4.1 : Project  Planning  16 
+Table  5.2.6.1  : Feedback  Table  25 
+Table  5.2.4.2  : Packaging  Suggestions  Table  25 
+Table  5.2.4.3  : Products  Table  25 
+Table  5.2.4.4  : Uploads  Table  25 
+Table  5.2.4.5  : Users  Table  25 
+ 
+
+DEPARTMENT  OF COMPUTER  SCIENCE  & 
+INFORMATION TECHNOLOGY  
+ 
+2022 -2026  
+ 
+DECLARATION  
+ 
+I hereby  declare  that the work,  which  is being  presented  in this project 
+entitled  “AcroConnect -The-AITR -Placement -Readiness -Platform” 
+in partial fulfillment of the requirements for the award of degree of 
+Bachelor of Technology in Computer Science and Information 
+Technology , is authentic record of work carried out by me.  
+ 
+ 
+Place:  CSIT,  Indore 
+Date:  
+ 
+ 
+ 
+ 
+ 
+ 
+Signature  of Student   Signature  of Student   Signature  of Student 
+Varun Purohit  Varun Bhaisare  Mohd.  Ayan  Mansuri 
+0827CI221148   0827CI221147   0827CI221093  
+ 
+I | P a g e 
+
+
+DEPARTMENT  OF COMPUTER  SCIENCE  & 
+INFORMATION TECHNOLOGY  
+ 
+2022 -2026  
+ 
+RECOMMENDATION  
+ 
+This is to certify that the work embodied in this project entitled 
+“AcroConnect -The-AITR -Placement -Readiness -Platform” 
+submitted by Varun Purohit (0827CI221148), Varun Bhaisare 
+(0827CI221147), Mohd. Ayan Mansuri (0827CI221093) is a 
+satisfactory account of the bonafide work done under the supervision 
+of Prof.  Nidhi  Nigam , is recommended  towards  partial  fulfillment  for 
+the award of the Bachelor of Technology in Computer Science & 
+Information Technology degree by Rajiv Gandhi Proudyogiki 
+Vishwavidhyalaya, Bhop al. 
+ 
+ 
+ 
+ 
+ 
+ 
+Project  Guide  Project  Coordinator  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+II | P a g e 
+
+
+DEPARTMENT  OF COMPUTER  SCIENCE  & 
+INFORMATION TECHNOLOGY  
+ 
+2022 -2026  
+ 
+CERTIFICATE  
+The Project entitled “ AcroConnect -The-AITR -Placement -Readiness - 
+Platform” submitted by Varun Purohit (0827CI221148), Varun Bhaisare 
+(0827CI221147), Mohd. Ayan Mansuri (0827CI221093) has been 
+examined  and is hereby  approved  towards  partial  fulfillment  for the award  of 
+Bachelor  of Technology  in Computer  Science  & Information  Technology, 
+for wh ich it has been submitted. It is understood that by this approval the 
+undersigned do not necessarily endorse or approve any statement made, 
+opinion expressed or conclusion drawn therein, but approve the project only 
+for the purpose for which it has been su bmitted.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Internal  Examiner  External  Examiner  
+ 
+ 
+Date:  Date:  
+ 
+ 
+ 
+III | P a g e 
+
+
+DEPARTMENT  OF COMPUTER  SCIENCE  & 
+INFORMATION TECHNOLOGY  
+ 
+2022 -2026  
+ 
+STUDENT  UNDERTAKING  
+This is to certify  that project  entitled  “AcroConnect -The-AITR -Placement - 
+Readiness -Platform” has developed by us under the supervision of Prof. 
+Nidhi Nigam . The whole responsibility of work done in this project is ours. 
+The sole intension of this work is only for practical learning and research.  
+We further declare that to the best of our knowledge, this report does not 
+contain any part of any work which has been submitted for the award of any 
+degree  either  in this University  or in any other  University  / Deemed  University 
+without proper citation and if the sa me work found then we are liable for 
+explanation to this.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Varun Purohit  Varun Bhaisare  Mohd.  Ayan  Mansuri 
+Date:  Date:  Date:  
+ 
+ 
+ 
+IV | P a g e 
+
+
+ACKNOWLEDGEMENT  
+We thank  the almighty  Lord  for giving  me the strength  and courage  to sail out through  the 
+tough and reach on shore safely.  
+We owe a debt of sincere gratitude, deep sense of reverence and respect to our guide 
+Professor Nidhi Nigam and mentor Project Coordinator Name , Designation , AITR, 
+Indore for their motivation, sagacious guidance,  constant encouragement, vigilant 
+supervision and valuable critical appreciation throughout this project work, which helped 
+us to successfully complete the project on time.  
+We express  profound  gratitude  and heartfelt  thanks  to Prof.  (Dr.) Shilpa  Bhalerao  HOD 
+CSIT , AITR  Indore  for her support,  suggestion  and inspiration  for carrying  out this project. 
+We would  be failing  in our duty if do not acknowledge  the support  and guidance  received 
+from Prof. (Dr.) S. C. Sharma, Director , AITR, Indore whenever needed. We take 
+opportunity  to convey  my regards  to the Management  of Acropolis  Institute,  Indore  for 
+extending academic and administrative support and providing us all necessary facilities 
+for project to achieve our objectives.  
+We are grateful to our parent and family members who have always loved and supported 
+us unconditionally.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Varun  Purohit  Varun  Bhaisare  Mohd.  Ayan  Mansuri  
+0827CI221148  0827CI221147  0827CI221093  
+ 
+ 
+ 
+ 
+ 
+ 
+V | P a g e 
+
+TABLE  OF CONTENTS  
+ 
+DECLARATION  I 
+RECOMMENDATION  II 
+CERTIFICATE  III 
+STUDENT  UNDERTAKING  IV 
+ACKNOWLEDGEMENT  V 
+ABSTRACT  VI 
+CONTENTS  VII 
+List of Figures  VIII 
+List of Tables  IX 
+List of Abbreviations  X 
+Chapter  1: Introduction  1 
+1.1 Overview  1 
+1.2 Existing System  1 
+1.3 Problem  Statement  2 
+1.4 Proposed  System  2 
+1.5 Need and Scope  3 
+1.6 Report  Organization  3 
+Chapter  2: Literature  Survey  4 
+2.1 Study  4 
+2.2 Problem  Methodology  5 
+2.3 Software  Engineering  Paradigm  5 
+2.4 Software  Development  Life Cycle  6 
+2.5 Technology Methodology  7 
+2.6 Hardware  Requirements  8 
+Chapter  3: Analysis  9 
+ 
+VI | P a g e 
+
+3.1 Identification  of System  Requirements  9 
+3.2 Functional  Requirements  9 
+3.3 Non-Functional  Requirement  10 
+3.4 Feasibility Study  10 
+3.4.1  Technical  Feasibility  11 
+3.4.2  Financial  Feasibility  11 
+3.4.3  Operational  Feasibility  11 
+Chapter  4: Project  Planning  12 
+Chapter  5: Design  13 
+5.1 Introduction  to UML  13 
+5.2 UML  Diagrams  14 
+5.2.1  Use Case  Diagram  14 
+5.2.2  Class  Diagram  15 
+5.2.3  Sequence  Diagram  16 
+5.2.4  ER Diagram  17 
+5.2.5  Activity Diagram  18 
+5.3 Database  Design  (Table  Structure)  19 
+Chapter  6: Implementation  20 
+6.1 Coding  (Main  Module  - PoC)  20 
+6.2 Results:  Screen  Shots  24 
+Chapter  7: Testing  29 
+7.1 Testing Objectives  29 
+7.2 Test Cases  30 
+Chapter  8: Conclusion  32 
+8.1 Conclusion  32 
+8.2 Future  Work  32 
+ 
+VII | P a g e 
+
+References  33 
+Appendix  34 
+ 
+ 
+ 
+LIST  OF FIGURES  
+ 
+ 
+Figure  No. and Title  Page 
+No. 
+Figure  4-1: Project  Timeline  (Gantt  Chart)  12 
+Figure  5-1: AcroConnect  System  Architecture  13 
+Figure  5-2: Use Case  Diagram  14 
+Figure  5-3: Class  Diagram  (Final  Project)  15 
+Figure  5-4: Sequence  Diagram  (Roadmap  Generation)  16 
+Figure  5-5: ER Diagram  (Final  Project)  17 
+Figure  5-6: Activity  Diagram  (Student  Workflow)  18 
+Figure  6-1: PoC File Structure  21 
+Figure  6-2: Home  Page  Screenshot  24 
+Figure  6-3: Student  Portal  Form  Screenshot  25 
+Figure  6-4: AI Roadmap  Generation  Screenshot  25 
+Figure  6-5: TPO  Dashboard  (Login)  Screenshot  26 
+Figure  6-6: TPO  Dashboard  (Analytics)  Screenshot  27 
+Figure  6-7: TPO  Dashboard  (Data  Table)  Screenshot  27 
+Figure  6-8: TPO  Dashboard  (Delete  Function)  Screenshot  28 
+Figure  7-1: Test Case  1 Output  (Invalid  Login)  31 
+Figure  7-2: Test Case  2 Output  (Data  Pipeline  Pass)  31  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+VIII | P a g e 
+
+LIST  OF TABLES  
+ 
+ 
+ 
+ 
+Table  No. and Title Page  No. 
+Table  2-1: Literature  Review  Comparison  Table  4 
+Table  2-2: Hardware  Requirements  8 
+Table  2-3: Software  Requirements  8 
+Table  5-1: PoC Database  Structure  (students  table)  19 
+Table  7-1: Test Cases  for Student  Portal  30 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+IX | P a g e 
+
+LIST  OF ABBREVIATIONS  
+ 
+ 
+Abbreviations  
+• Abbr1:  TPO  - Training  & Placement  Office  
+• Abbr2:  AI - Artificial  Intelligence  
+• Abbr3:  LLM  - Large  Language  Model  
+• Abbr4:  API - Application  Programming  Interface  
+• Abbr5:  PoC - Proof  of Concept  
+• Abbr6:  UML  - Unified  Modeling  Language  
+• Abbr7:  ER - Entity -Relationship  
+• Abbr8:  SQL  - Structured  Query  Language  
+• Abbr9:  DRF  - Django  REST  Framework  
+• Abbr10:  PoC - Proof  of Concept  
+• Abbr11:  SDLC  - Software  Development  Life Cycle  
+• Abbr12:  GUI - Graphical  User  Interface  
+• Abbr13:  SRS - Software  Requirements  Specification  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+X | P a g e 
+
+ 
+ABSTRACT  
+ 
+The traditional college placement process, often reliant on manual data entry and 
+disconnected spreadsheets, constitutes a significant threat to both student outcomes and  
+institutional  efficiency.  The Training  & Placement  Office  (TPO)  frequently  lacks the 
+accessible, data -driven tools needed to effectively balance student readiness with 
+complex industry demands.  
+ 
+Simultaneousl y, students lack personalized, actionable guidance for their career 
+preparation. AcroConnect proposes the development of an AI -powered full -stack web  
+platform  designed  to provide  a verifiable  and intelligent  solution  to this systemic problem. 
+The system’s core is an AI Recommendation Engine that analyzes specific student  
+profiles  against  a comprehensive  database  of industry  skill requirements  and career paths.  
+ 
+The primary goal of AcroConnect  is to deliver highly accurate, personalized career 
+roadmaps to students while providing a powerful TPO Analytics Dashboard for 
+administrative oversight. By recommending solutions proven to enhance student 
+readiness and generate substantial reductions in a dministrative overhead, and by 
+integrating these capabilities with a user -friendly Business Intelligence platform for 
+essential  reporting,  AcroConnect  transforms  complex  placement  management  into a clear, 
+scalable, and data -driven strategic advantage for t he institution.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+
+ 
+ 
+ 
+CHAPTER 1  
+  
+
+Chapter  1: Introduction  
+1.1 Overview  
+In today's highly competitive job market, the effective placement of students is a primary 
+performance indicator for an institution's success. The Training & Placement Office (TPO) at 
+Acropolis Institute of Technology and Research (AITR) serves as the critical bridge between 
+student talent and corporate opportunities.  This project,  "AcroConnect," is an intelligent,  
+centralized  platform  designed  to modernize and  optimize this entire process.  
+By leveraging a full -stack web application, a robust database, and a powerful AI (Google 
+Gemini), AcroConnect  will provide  data-driven  insights  to the TPO  and personalized,  
+actionable  career  guidance  to students. This system is designed to ensure AITR graduates are 
+not just "eligible" but "ready" for their target  careers,  transforming  the placement  process  
+from  a manual,  reactive  task into a smart,  proactive,  and data -driven institutional advantage.  
+1.2 Existing  System  
+The current  process for placement management at the institution relies on a collection of 
+manual and disconnected tools. Student data (academic scores, skills, contact info, resumes) 
+is gathered from various sources, such as Google Forms or paper documents, and is th en 
+manually compiled into static Microsoft Excel spreadsheets.  
+This "existing  system"  creates  several  critical  operational  problems:  
+● Data is Stale and Siloed: The data is only accurate at the moment it's collected. 
+Updating hundreds of student records in a  spreadsheet is difficult and error -prone.  
+● No Real -Time Analytics: It is impossible for the TPO to get an instant, real -time 
+"dashboard view" of the entire batch (e.g., "Show me how many students know Python" 
+or "What is the average skill level for data sc ience?").  
+● High Administrative Overhead: Matching students to complex job descriptions (JDs) 
+is a slow, manual, and inefficient process of visually searching and filtering 
+spreadsheets.  
+● Student Disconnect: Students have no central place to view their "place ment profile" or 
+understand how their skills stack up against real job openings.  
+This manual system is time -consuming, does not scale, and is prone to human error, creating 
+a significant bottleneck for the institution.  
+ 
+ 
+1.3 Problem  Statement  
+The core problem is a systemic data and communication gap between the TPO, the students, 
+and the industry's demands [cite: 13 -22]. 
+1. For the TPO: The lack of a centralized, queryable system means the TPO is "flying blind." 
+They cannot efficiently match the r ight students to the right opportunities, track student 
+readiness in real - time, or generate analytical reports for administration.  
+
+2. For the Students: Students are "lost." They lack a clear, personalized roadmap. They often 
+face "analysis paralysi s," unsure which skills to build to be competitive, leading to a 
+stressful and inefficient preparation process.  
+3. For the Institution:  The reliance  on manual  processes  creates  a high risk of missed  
+opportunities  and represents an inefficient use of the TPO's  valuable time and resources.  
+This project addresses the need for a single, intelligent, and unified platform that replaces manual 
+guesswork with data -driven automation and personalized, AI -driven guidance.  
+1.4 Proposed  System  
+The proposed solution is AcroConnect , a multi -user, role -based, full -stack web application. 
+The system will be architected with a professional, service -oriented design based on the 
+Python ecosystem.  
+The project will be built using the Django framework, chosen for its robust securi ty, 
+scalability, and powerful built -in Admin panel. The system is composed of three main parts:  
+1. Backend & API (Django / DRF): A central Django REST Framework (DRF) API 
+will serve as the "brain," handling all business logic, user authentication, and secure 
+communication with the database and the AI.  
+2. Database (PostgreSQL): A robust, open -source relational database to act as the "single 
+source of truth" for all student, TPO, and job data.  
+3. Frontend  1 (Student  Portal):  A modern  Streamlit  application  will serve  as the student -
+facing  portal. It  will consume  the Django  API to provide  a rich, interactive  experience  
+(profile  building,  AI roadmap generation, job matching).  
+4. Frontend  2 (TPO  Dashboard):  The built-in Django  Admin  Panel  will be 
+professionally  customized to  serve as a secure, powerful dashboard for the TPO, 
+providing analytics, student search, and job management tools.  
+This architecture is modular, scalable, and aligns with modern software engineering 
+practices, separating the backend logic from the frontend  presentation.  
+ 
+ 
+1.5 Need  and Scope  
+Need: There is an urgent institutional need to automate the placement process, reduce 
+manual overhead, and leverage data to improve student outcomes. This system will give 
+AITR a significant competitive advantage by ensuring its students are better prepared and 
+more accurately matched to industry opportunities.  
+Scope:  The scope  of this project  is to create  a complete,  end-to-end platform  for internal  use 
+by AITR students and the TPO.  
+● In Scope:  
+○ Secure,  role-based  user authentication  (Student  and TPO  Admin).  
+○ Student  Profile  Management  (academic,  skills,  projects,  contact  info).  
+○ AI-Powered  Roadmap  Generation  (using  Google  Gemini  API).  
+
+○ TPO  Job Posting Management.  
+○ TPO  Analytics  Dashboard  (charts,  search,  filters).  
+○ Automated Student -to-Job Matching Notifications.  
+● Out of Scope:  
+○ Direct  chat/messaging  between  students  and recruiters.  
+○ Handling  of university  fees or academic  registration.  
+○ A publicly  facing  mobile  application  (the web app will be mobile -responsive).  
+ 
+ 
+1.6 Report  Organisation  
+Chapter  1 states  the overview  of the project  with discussing  about  the existing  systems  in 
+today’s  scenario. Describing about the problem statement we are facing about the system. We 
+have given our proposed solution considering all the shortcoming of the previously used 
+system.  
+ 
+Chapter 2 states the literature survey i.e. the background details of our system including the 
+software engineering  paradigm  and explaining  about  the technologies  (Software  and 
+Hardware  requirement)  which we have used building the system.  
+ 
+Chapter  3 states  about  the Analysis  of the whole  system  i.e. identification  of system  
+requirement  about  the feasibility study -Technical Feasibility, Financial Feasibility, 
+operational Feasibility.  
+ 
+Chapter 4 states about the Design of the whole system including all  the UML diagrams all 
+the tools used with ER Diagram and Data Flow Diagram and Data Dictionary.  
+ 
+Chapter  5 states  about  the whole  code  of the system,  in our case the Python  and Streamlit  code  
+for the Proof of Concept (PoC), and its integration and adaptability.  
+ 
+Chapter 6 states the Testing phase of our system, detailing all the different testing methods 
+and strategies and the test cases run against our live PoC.  
+ 
+Chapter  7 states  the conclusion  of the whole  system  explaining  the advancement  of our 
+project  in future. References: The books, websites, journals, blogs which we have referred.  
+Chapter 8 states our Conclusion for our project Acro -Connect  
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+CHAPTER 2
+
+Chapter  2: Literature  Survey  
+ 
+2.1 Study  
+As we all know, in many educational institutions, customized application software is required 
+to solve the organization's complex, day -to-day activities. Such customization is framed with 
+the help of a complete domain  analysis  of the functionalities  performed  at the organiza tion on 
+a regular  basis,  which  can be solved with the help of application software by reducing manual 
+efforts.  
+Among the difficulties faced by college placement offices —such as excessive paperwork, 
+manually searching for student data, arranging them, and t racking placement readiness —a 
+centralized, automated solution is needed in such a busy environment. This kind of 
+application software is ready to be welcomed to automate the process, reducing manpower 
+and time consumed. The main aim is to satisfy the users  of the application (both students and 
+the TPO) and also reduce the time spent on the manual process of matching students to jobs. 
+Our ultimate motto is to mitigate the time consumption in processing data and eliminate  the 
+paperwork  of searching/sorting  for information,  thereby  accomplishing  both institutional  and 
+student demands.  
+2.2 Problem  Methodology  
+This project will utilize an Agile (Iterative) methodology . This modern approach provides 
+an alternative to traditional project management like the Waterfall model. The Agile way 
+promotes adaptive planning, evolutionary development, and continuous improvements. This 
+is ideal for a complex software build, as it allows our team to build and test features in 
+modular "sprints."  
+The project  is broken  into two primar y phases:  
+1. Phase  1: PoC (7th Semester):  Focus  on planning,  architecture,  and validating  the core 
+technical  risk by building a Proof of Concept (PoC). This PoC integrates the frontend 
+(Streamlit), a backend database (SQLite), and the AI API (Google Gemini).  
+2. Phase 2: Full Build (8th Semester): Focus on building out the complete, production -
+grade system based  on the 8th-semester  architecture:  a Django  backend,  PostgreSQL  
+database,  and the full-featured TPO Admin panel and Student Portal.  
+
+2.3 Software  Engineering  Paradigm  
+The principles  of our software  design  include:  
+● Reliability:  The system  must  be reliable,  especially  during  peak  placement  season.  By using  
+a robust framework like Django and a production -grade database like PostgreSQL, we 
+ensure the system can handle concurrent user requests and avoid data corruption.  
+● Reusability:  The system  is built on a service -oriented  architecture.  The central  Django  
+REST  API is highly reusable. Any new client (e.g., a future mobile app) can use the same 
+API as the Streamlit  Student Portal.  
+● Understandability:  The code  will be well-documented  and separated  by concern  (Backend  
+API,Student  Frontend,  TPO  Backend).  This simplified,  modular  structure  makes  the 
+system  easy to understand, maintain, and upgrade.  
+● Simple  Program:  The code  for each component  will be kept as simple  and clean  as 
+possible, following Python's "Zen of Python" principles.  
+● Testability:  Each  component  (the API, the frontends)  can be tested  independently.  The API 
+will have a full suite of unit tests, and the PoC  itself serves as a comprehensive system 
+integration test.  
+ 
+ 
+2.4 Software  Development  Life Cycle  (SDLC)  
+While  the sample  mentions  the Waterfall  model,  our project  is better  suited  for an Agile  
+(Iterative)  Model . The SDLC stages will be:  
+1. Planning  & Requirements:  (Completed  in Phase  1) - Defining  the full scope,  as 
+detailed  in our Synopsis and this SRS.  
+2. Design  & Architecture:  (Completed  in Phase  1) - Creating  the UML,  ER, and Architecture  
+diagrams.  
+3. Implementation  (Iterative): (Phase  1 PoC,  followed  by Phase  2 Full Build)  - Building  the 
+software in iterative sprints.  
+4. Testing (Continuous): (Phase 1 PoC, followed by Phase 2 Full Build) - Testing each 
+feature as it's built, rather than waiting until the end.  
+5. Deployment: (Completed for PoC) - The final proj ect will be professionally deployed on a 
+cloud  platform (e.g., Render, Streamlit Cloud).  
+6. Maintenance:  Post-deployment  bug fixes  and feature  enhancements.  
+This Agile  approach  allows  for flexibility  and ensures  we have a working  product  at every  
+stage, minimizing risk.  
+
+ 
+2.5 Technology  Methodology  
+2.5.1 Hardware  Requirements  
+● Development:  Any modern developer  laptop  (e.g., Core  i5/Ryzen  5, 8GB+  RAM, SSD).  
+● Deployment:  Cloud -based  PaaS  (Platform  as a Service)  is required:  
+○ Backend:  Render  (for hosting  the Django/PostgreSQL  backend).  
+○ Frontend:  Streamlit  Community  Cloud  (for the Student  Portal  PoC).  
+2.5.2 Software  Requirements  
+● Operating  System:  Windows  10/11,  macOS,  or Linux.  
+● Backend  Framework:  Django  & Django  REST  Framework  (DRF)  
+○ Why: Django is a high -level Python  framework that enables rapid development of 
+secure and maintainable websites. It includes a built -in ORM (Object -Relational 
+Mapper), user authentication,  and a production -ready  admin  panel,  which  will save our 
+team  hundreds  of hours of work.  
+● Database: PostgreSQL  
+○ Why: A powerful, open -source object -relational database system. It is highly reliable 
+and is the preferred database for serious, production -grade Django applications.  
+● Frontend  (Student):  Streamlit  
+○ Why: A Python -based framework for building data applications. It allows for 
+incredibly fast development of an interactive, data -centric UI without needing to write 
+HTML/CSS/JavaScript, making it perfect for our PoC and the final Student Portal.  
+● AI Engine:  Google  Gemini  API 
+○ Why:  A state-of-the-art Large  Language  Model  (LLM)  that allows  for complex,  human -
+like text generation. We will use it to power our AI Roadmap feature.  
+● IDE & Tools:  Visual  Studio  Code  , Git & GitHub.  
+ 
+ 
+ 
+○  
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+CHAPTER 3 
+ 
+
+Chapter  3: Analysis  
+ 
+3.1 Identification  of System  Requirements  
+System  requirements  are the requirements  at the system  level  that describe  the functions  which  
+the system as  a whole  should  fulfil  to satisfy  the user’s  needs  [cite:  135].  For AcroConnect,  
+requirements  were  gathered by analyzing the existing manual TPO process and identifying key 
+pain points for both students and administrators.  
+3.2 Functional  Requirements  
+The system  shall perform  the following  functions:  
+1. Authentication:  
+○ The system  shall  provide  a secure  login  for Students  and TPO  Admins.  
+○ The system  shall  have role-based  access  control  (Students  and TPO  see different  interfaces).  
+2. Student  Profile  Management:  
+○ A student  shall be able to create,  view,  and update  their personal  profile  (contact  info, 
+academics, skills, projects, resume).  
+3. AI Roadmap  Generation:  
+○ A student  shall be able to request  an AI-generated  career  roadmap.  
+○ The system  shall  send the student's  profile  data to the Gemini  API and display  the 
+formatted response.  
+4. TPO  Job Management:  
+○ A TPO  Admin  shall be able to create,  edit, and delete  job postings.  
+○ Job postings  shall include  fields  for title, description,  and skill requirements.  
+5. TPO  Analytics  Dashboard:  
+○ A TPO  Admin  shall  be able to view  real-time charts  visualizing  the student  body's  
+skill distribution and other metrics.  
+6. TPO  Student Management:  
+○ A TPO  Admin  shall be able to search,  filter,  and view  the profiles  of all students  in the 
+database.  
+7. AI Job Matching  (Future  Work):  
+○ The system  shall automatically  compare  new job postings  to student  profiles.  
+○ The system  shall notify  matching  students  via the Student  Portal.  
+3.3 Non-Functional  Requirements  
+● Performance: All web pages must load in under 3 seconds. AI -generated responses should 
+take no longer than 15 seconds.  
+● Security: All TPO data must be in accessible to students. All user passwords must be 
+hashed. The  deployed site must use HTTPS.  
+● Scalability:  The system  must  be architected  to handle  1000+  concurrent  students  and 
+10,000+ database records without a drop in performance.  
+● Usability:  The Student  Portal  must  be intuitive  and simple  to use. The TPO  Dashboard  must  
+prioritize data clarity and efficient filtering.  
+
+● Reliability: The system should have an uptime of 99.9% and handle errors gracefully (e.g., 
+if the AI API is down).  
+3.4 Feasibility  Study  
+A feasibility  study  evaluates  the project’s  potential  for success.  
+ 
+3.4.1 Technical  Feasibility  
+The project is 100% technically feasible. All core technologies (Python, Django, Streamlit, 
+PostgreSQL, Gemini API) are well -documented, stable, and widely used. Our team possesses the 
+necessary skills in Python and web development. Furthermore, our 7th -semester Proof of 
+Concept (PoC)  has already validated the most complex technical risk: the live integration of a 
+Streamlit frontend, a backend database (SQLit e), and the Google Gemini API.  
+3.4.2 Financial  Feasibility  
+The project has zero financial cost. All core technologies (Python, Django, Streamlit, 
+PostgreSQL) are open -source  and free. The Google  Gemini  API provides  a generous  free tier 
+sufficient  for development  and testing.  Cloud  deployment  platforms  (Streamlit  Community  
+Cloud,  Render)  provide  free tiers that are ideal for hosting this project.  
+3.4.3 Operational  Feasibility  
+The project  is highly  feasible  from  an operational  standpoint.  It directly  addresses  the known,  
+existing  pain points  of the TPO.  By automating  manual  tasks,  it does not create  new work  but 
+rather  reduces  the existing workload,  which  will lead to high adoption.  A small  amount  of 
+training  will be required  for the TPO  to use the new dashboard, which is  a standard part of any 
+software rollout.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+
+ 
+ 
+ 
+ 
+ 
+CHAPTER 4 
+ 
+ 
+ 
+ 
+ 
+  
+
+Chapter 4: Project Planning  
+ 
+ 
+The project focuses on developing the AcroConnect  Placement System, an intelligent platform 
+that recommends personalized, data -driven roadmaps to students and provides centralized, 
+efficient data management tools to the Training and Placement Officer (TPO). The system 
+leverages AI algorithms (Gemini AI),  a well -structured PostgreSQL database, and a user -friendly 
+web interface (Streamlit/Flask) to help educational institutions minimize manual workload and 
+maximize student preparation effectiveness. The system includes key modules such as the AI -
+based roadm ap generation, student profile management, TPO dashboard, report generation, and 
+secure authentication. The plan begins with setting up the development environment and 
+gathering detailed requirements, followed by iterative module development and testing. T he final 
+phase involves deployment, documentation, and user training  
+ 
+Module  Description of Work  Duratio
+n Week -wise 
+Breakdown  
+Module 
+One System Design & Architecture  - 
+Define system requirements for 
+both TPO and Student roles. Design 
+overall architecture 
+(Streamlit/Flask/PostgreSQL/Gemi
+ni AI stack), sketch data flow 
+(Sequence Diagram), create ER 
+diagram, and finalize API contracts.  3 Weeks  Weeks 1 -3: 
+Week 1 - 
+Requirem ents 
+gathering, 
+TPO/Student use -
+cases, and user 
+stories. Week 2 - 
+High -level 
+architecture, 
+component 
+diagrams, API 
+contracts between 
+Flask and 
+Streamlit. Week 3 
+- Database 
+schema draft, 
+technology stack 
+
+Module  Description of Work  Duratio
+n Week -wise 
+Breakdown  
+finalization, 
+design review.  
+Module 
+Two  Database & TPO Logic  - Build the 
+centralized PostgreSQL database: 
+tables for user roles, student 
+profiles, academic records, 
+placement history, and AI 
+roadmaps. Implement core TPO 
+CRUD (Create, Read, Update, 
+Delete) business logic.  4 Weeks  Weeks 4 -7: 
+Week 4 - Finaliz e 
+schema, set up 
+PostgreSQL 
+server, and 
+implement 
+indexing strategy. 
+Week 5 - 
+Implement tables, 
+relations, and 
+constraints. Week 
+6 - Implement 
+Flask 
+Repository/DAO 
+layer for core 
+data access. 
+Week 7 - 
+Implement TPO 
+logic service 
+layer (e.g., bulk 
+upload 
+processing, data 
+integrity checks).  
+Module 
+Three  AI Model & Backend API  - 
+Develop the Gemini AI integration 
+algorithms and expose the roadmap 
+generation feature via secure Flask 5 Weeks  Weeks 8 -12: 
+Week 8 - Data 
+preparation and 
+feature 
+
+Module  Description of Work  Duratio
+n Week -wise 
+Breakdown  
+APIs. Integrate the core business 
+logic (user authentication, data 
+retrieval) w ith the frontend API 
+contracts.  engineering based 
+on student profile 
+data for AI 
+prompting. Week 
+9 - Prototype 
+prompt 
+engineering 
+strategies for 
+Gemini AI. Week 
+10 - Model 
+optimization and 
+final pro mpt 
+tuning based on 
+quality and 
+relevance of 
+roadmaps 
+generated. Week 
+11 - Build Flask 
+API endpoints for 
+user 
+authentication, 
+student data 
+retrieval, and the 
+/roadmap/generat
+e endpoint. Week 
+12 - Unit tests for 
+APIs, session 
+management 
+implementation, 
+and endpoint 
+
+Module  Description of Work  Duratio
+n Week -wise 
+Breakdown  
+security 
+hardening.  
+Module 
+Four  Web Platform Development  - 
+Implement the complete user 
+dashboards using Streamlit. This 
+includes the TPO data management 
+view, the Student profile view, the 
+AI roadmap input/display interface, 
+and report generation /visualization.  6 Weeks  Weeks 13 -18: 
+Week 13 - 
+Frontend 
+scaffolding 
+(Streamlit) and 
+routing setup. 
+Week 14 - 
+Implement core 
+student pages: 
+profile view and 
+AI roadmap 
+generator input 
+form. Week 15 - 
+Implement TPO 
+data dashboard 
+and student grid 
+view. Week 16 - 
+Connect Streamlit 
+frontend 
+components to 
+Flask backend 
+APIs, 
+implementing 
+secure 
+authentication 
+flows. Week 17 - 
+Implement report 
+generation 
+
+Module  Description of Work  Duratio
+n Week -wise 
+Breakdown  
+(PDF/CSV 
+export) and data 
+visualization 
+widgets. Week 18 
+- UI testing, 
+accessibility 
+checks, and 
+responsivenes s 
+fixes.  
+ModuleFiv
+e Testing & Deployment  - Perform 
+comprehensive end -to-end testing, 
+pilot deployment with TPO 
+stakeholders, real -time validation in 
+a pilot environment, bug fixes, and 
+final production rollout.  3 Weeks  Weeks 19 -21: 
+Week 19 - 
+Integration and 
+end-to-end testing 
+(functional, 
+regression, 
+security, AI 
+accuracy). Week 
+20 - Pilot 
+deployment with 
+TPO/sample 
+students, gather 
+feedback, and fix 
+critical issues. 
+Week 21 - Final 
+production 
+deployment, 
+monitoring setup, 
+handover 
+documentation, 
+and user training.  
+
+ 
+ 
+ 
+ 
+ 
+ 
+CHAPTER 5 
+ 
+ 
+
+Chapter  5: Design  
+ 
+5.1  Introduction  to UML  
+The Unified  Modelling  Language  (UML)  is a general -purpose  modelling  language.  The 
+main  aim of UML is to define a standard way to visualize the way a system has been 
+designed. It is a visual language, not a programming language. We use UML diagrams to 
+portray the behaviour and structure of a system. UML helps software engineers, 
+businessmen, and sys tem architects with modelling, design, and analysis.  
+5.2  UML  Diagrams  
+ 
+Complex applications need collaboration and planning from multiple teams and  
+hence require a clear and concise way to communicate amongst them.  
+Businessmen do not understand code, so UML b ecomes essential to communicate 
+with non -programmers essential requirements, functionalities and processes of the 
+system.  
+A lot of time is saved down the line when teams are able to visualize 
+processes user interactions and static structure of the system.  
+ 
+5.2.1 Use Case  Diagram  
+ 
+The purpose  of a use case diagram  in UML  is to demonstrate  the different  ways  that 
+a user might interact with a system. Use case diagrams consist of 3 objects.  
+Actor: Actor in a use case diagram is any entity that performs a role in one given 
+system.  This could  be a person,  organization  or an external  system  and usually  
+drawn like skeleton.  
+ 
+                                                                     
+ 
+ 
+                                                                   Figure  5.2.1:  Actor  
+ 
+Use Case:  A use case represents  a function  or an action  within  the system.  It’s drawn as an 
+oval and named with the function.  
+ 
+ 
+ 
+ 
+                                                         
+Figure  5.2.2:  Use Case 
+
+
+ 
+ System: The system is used to  define the scope of the use case and drawn as a rectangle.  This    
+an optional  element  but useful  when  you’re  visualizing  large  system  
+ 
+ 
+                                                                          Figure  5.2.3:  System  
+ 
+ 
+ 
+Our system has two main actors: the Student and the TPO Admin  :-  
+ 
+ 
+                                       
+ 
+Figure  4.1: Use Case  Diagram  for AcroConnect  
+ 
+ 
+ 
+
+
+ 
+ 
+5.2.2 Class  Diagram  
+The class diagram is the main building block of object -oriented modeling. It describes 
+the structure of a system by showing the system's classes, their attributes, and their 
+relationships. This diagram represents the final 8th -semester Django backend models.  
+ 
+ 
+ 
+Figure  4.2: Class  Diagram  for AcroConnect  Backend  
+
+
+5.2.3 Sequence  Diagram  
+Sequence diagram are sometimes known as an event diagrams or event scenarios .A 
+sequence  diagram  describes  how—and in what  order —a group  of objects  works  
+together.  This diagram shows the "Get AI Roadmap" process.  
+ 
+ 
+ 
+Figure  4.3: Sequence  Diagram  for Student  Roadmap  Generation  
+ 
+ 
+ 
+5.2.4 Activity  Diagram  
+An activity  diagram  portrays  the control  flow from  a start point  to a finish  point,  
+showing  various decision paths. This shows the main student workflow.  
+
+
+ 
+ 
+Figure  4.4: Activity  Diagram  for Student  Portal  Workflow  
+
+
+5.3 Database  Design  
+5.3.1 ER Diagram  
+An Entity -Relationship (ER) Diagram is a visual representation of data that describes how 
+data is related to each other. This is the proposed ER Diagram for our final 8th -semester 
+PostgreSQL database.  
+ 
+ 
+Figure  4.5: ER Diagram  for AcroConnect  Database  
+
+
+5.3.2 Table  Structure  (PoC)  
+The 7th-semester  Proof  of Concept  (PoC)  utilizes  a simplified  SQLite  database  to 
+validate  the data pipeline. The table structure is as follows (matching the 
+acroconnect.db file):  
+CREATE  TABLE  IF NOT  EXISTS  students  ( 
+id INTEGER  PRIMARY  KEY  
+AUTOINCREMENT, name TEXT NOT NULL,  
+email 
+TEXT, 
+phone  
+TEXT,  
+career_goal  TEXT  NOT  
+NULL, python_skill 
+INTEGER, sql_skill 
+INTEGER, 
+generated_roadmap 
+TEXT  
+); 
+ 
+ 
+Figure  4.6: Table  Structure  for the students  table  used in the 7th-semester  Proof  of Concept.  
+ 
+ 
+ 
+ 
+  
+
+ 
+ 
+ 
+ 
+ 
+CHAPTER 6 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+
+Chapter  6: Implementation  
+ 
+6.1 Coding  (Main  Module)  
+For the 7th -semester submission, we implemented a 100% functional Proof of Concept 
+(PoC) to validate our core architecture. The PoC is built as a multi -page Streamlit application 
+that is deployed live on Streamlit Community Cloud.  It demonstrates  the complete  end-to-
+end data pipeline:   
+(1) Student  data collection,  
+(2) Writing  data to a live SQLite database,  
+(3) Calling the Google Gemini API,  
+(4) Displaying the AI response,  
+(5) Reading all data in a secure TPO portal, and  
+(6) Deleting records from the database."]  
+6.1 .1 PoC  File Structure  
+
+ 
+Figure  5.1: File Structure  of the AcroConnect  PoC 
+ 
+PoC Code  Snippets  (app.py)  
+[In this section,  paste  in the most  important  functions  from  our app.py  file. DO NOT  paste  the 
+whole  file here (that goes in the Appendix). Good functions to include are:  
+1. init_db()  
+
+
+ 
+2. get_ai_roadmap(...)  
+ 
+ 
+ 
+ 
+ 
+3. save_to_db(...)  
+ 
+               
+
+
+ 
+ 
+4. The TPO  password  check  and analytics  section . 
+ 
+   
+ 
+ 
+ 
+ 
+ 
+6.2 Results:  Screen  Shots  
+ 
+
+
+ 
+Figure  6.2: Home  Page   
+ 
+ 
+ 
+ 
+ 
+ 
+       Figure  6.3: Student  Portal  Form   
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+Figure  6.4: AI Roadmap  Generation  
+ 
+ 
+Figure  6.5: TPO  Dashboard  (Login)   
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+Figure  6.6: TPO  Dashboard  (Analytics ) 
+ 
+ 
+ 
+ 
+ 
+       Figure  6.7: TPO  Dashboard  (Data  Table)  
+ 
+ 
+ 
+ 
+
+
+ 
+ 
+Figure  6.8: TPO  Dashboard  (Delete  Function)  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+CHAPTER 7
+
+Chapter  7: Testing  
+7.1 Testing  Objectives  
+The objective  of testing  is to find errors  and ensure  the software  is reliable  and functions  as specified.  Our 
+testing for the 7th -semester PoC focused on validating the complete end-to-end data pipeline and all core 
+functionalities. We used manual, functional testing on the live, deployed application to simulate real - 
+world user interactions.  
+7.2  PoC Test Cases  
+[Create  a table  just like this one. This proves  our PoC is "100%  implemented  with outcomes."]  
+ 
+Test Case  ID Feature  Test 
+Description  Expected 
+Result  Actual  Result  
+TC-01 Student  Portal  Submit form 
+with all fields 
+empty.  A warning 
+message "Please 
+fill out all fields" 
+should appear.  Pass 
+TC-02 Student  Portal  Submit form 
+with valid  data 
+(Name,  Email, 
+Goal, Skills).  App shows a 
+spinner, then 
+"Your  roadmap 
+is ready!" and 
+displays a text 
+roadmap.  Pass 
+TC-03 TPO  Dashboard  Enter  the wrong 
+password (e.g., 
+"wrongpass").  An "Incorrect 
+Password"  error 
+should appear. 
+The data table 
+and charts 
+should not be 
+visible.  Pass 
+TC-04 TPO  Dashboard  Enter  the correct 
+password 
+(tpo123).  Access is 
+granted. The 
+analytics  charts 
+and the student 
+data table are  Pass 
+   displayed.   
+
+TC-05 Data  Pipeline  1. Submit  a new 
+student ("Test 
+User") in the 
+Student Portal.  
+ 
+2. Go to the TPO 
+Dashboard and 
+log in.  The data for 
+"Test User" 
+should  appear  in 
+the main data 
+table and be 
+reflected in the 
+analytics charts.  Pass 
+  TC-06 Delete  Function  1. Note the 
+"Student ID" of 
+"Test  User"  from 
+the table.  
+ 
+2. Enter that ID 
+in the "Delete a 
+Student  Record" 
+form and click 
+"Delete".  The page 
+refreshes. The 
+record  for "Test 
+User" is now 
+gone from the 
+table and the 
+charts are 
+updated.  Pass 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+CHAPTER 8 
+ 
+
+Chapter  8: Conclusion  
+8.1  Conclusion  
+This project successfully designed and validated the core architecture for AcroConnect , an 
+intelligent placement  readiness  platform.  The 7th-semester  Proof  of Concept  (PoC)  confirmed  
+the technical  feasibility of the most critical system loop: the integration of a web -based 
+frontend (Streamlit), a persistent backend database (SQLite), and a generative AI (Google 
+Gemini API).  
+The deployed PoC demonstrates a 100% implemented, end -to-end data pipeline. It 
+successfu lly collects student data, writes it to a database, generates a complex AI roadmap, 
+and displays the collected data in a secure, password -protected administrative dashboard with 
+live analytics and database management features. This PoC serves as a robust a nd 
+"significant" foundation for the full -scale development planned  for the 8th semester.  
+8.2  Future  Work  
+The 8th-semester  development  will focus  on scaling  this validated  PoC into the full, 
+production -grade system outlined in the design chapters.  
+8.2.1 Implement Dj ango Backend: Build the complete Django REST Framework API 
+and migrate the  database from SQLite to PostgreSQL.  
+8.2.2 Full User  Authentication:  Replace  the PoC password  with a secure,  role-based  
+registration  and login system for both students and TPO.  
+8.2.3 Expand Student Profile: Implement the full, cascading -dropdown skill system 
+(Role -> Stack -> Skills) as designed.  
+8.2.4 Build AI Job Matcher: Implement the AI -driven job -matching algorithm to 
+automatically notify  students of relevant opportunities.  
+8.2.5 Enhance  TPO  Dashboard:  Build  out the full analytics  suite  in the Django  Admin  panel.  
+8.2.6 Publish  Research:  Complete  and submit  the planned  research  paper  on our novel  AI-driven  
+guidance methodology.  
+
+References  
+1. Khan,  A., & Ahmed,  S. (2024).  A Study  on University  Placement  Portal  Systems.  
+International Journal of Web & App Technology, 5 (2), 45 -51. 
+2. Chen, L., & Roy,  S. (2023). Data Analytics  in Higher Education: A  Framework for Student  
+Success.  
+Journal  of Educational  Data  Mining,  15(1), 112-130. 
+3. Patel, R., & Singh, V. (2024). AI -Driven Chatbots for Personalized Career Counseling. 
+Proceedings of the 2024 International Conference on AI in Education (AIED) . Springer.  
+4. Brown, T., et al. (2020). Language Models are Few -Shot Learners. Advances in Neural 
+Information Processing Systems, 33 . 
+5. Django  Software  Foundation.  (2025).  Django  Documentation . Retrieved
+ from https://www.djangoproject.com/  
+6. Streamlit  Inc. (2025).  Streamlit  Documentation . Retrieved  from  https://docs.streamlit.io/  
+7. Google.  (2025).  Google  AI Studio  & Gemini  API Documentation . Retrieved
+ from https://ai.google.dev/  
+8. PostgreSQL  Global  Development  Group.  (2025).  PostgreSQL  Documentation . Retrieved  
+from https://www.postgresql.org/docs/  
+9. Pandas  Development  Team.  (2025).  pandas  Documentation . Retrieved
+ from https://pandas.pydata.org/docs/  
+
+Appendix  
+Appendix  A: AcroConnect  PoC Source  Code  (app.py)  
+ 
+import streamlit as st  
+import google.generativeai as genai  
+import os  
+import sqlite3  
+import pandas as pd  
+from dotenv import load_dotenv  
+ 
+# --- 1. SETUP AND CONFIGURATION --- 
+load_dotenv()  # Load environment variables from .env file  
+ 
+# Configure the Gemini API 
+api_key = os.getenv("GOOGLE_API_KEY")  
+if not api_key:  
+    st.error("Google API Key not found. Please set your GOOGLE_API_KEY 
+secret in Streamlit Cloud.")  
+else: 
+    try: 
+        genai.configure(api_key=api_key)  
+        model = genai.GenerativeModel ('gemini -2.5-flash-lite') 
+    except Exception as e:  
+        st.error(f"Error configuring Gemini API: {e}")  
+ 
+# Set page config  
+st.set_page_config(  
+    page_title="AcroConnect PoC",  
+    page_icon=" 🎓", 
+    layout="wide"  
+) 
+ 
+
+# --- 2. DATABASE SETUP --- 
+DB_FILE = "acroconnect.db"  
+ 
+def init_db():  
+    """Initializes the SQLite database and creates the 'students' table 
+if it doesn't exist."""  
+    conn = sqlite3.connect(DB_FILE)  
+    cursor = conn.cursor()  
+    cursor.execute("""  
+    CREATE TABLE IF NOT EXISTS students (  
+    id INTEGER PRIMARY KEY AUTOINCREMENT,  
+    name TEXT NOT NULL,  
+    email TEXT NOT NULL,  
+    phone TEXT NOT NULL,  
+    career_goal TEXT NOT NULL,  
+    python_skill INTEGER,  
+    sql_skill INTEGER,  
+    java_skill INTEGER,  
+    generated_roadmap  TEXT 
+    ); 
+    """) 
+    conn.commit()  
+    conn.close()  
+ 
+# Run the DB setup  
+init_db()  
+ 
+# --- 3. HELPER FUNCTIONS (The "Guts") --- 
+ 
+def get_ai_roadmap(career_goal, python_skill, sql_skill, java_skill):  
+    """Calls the Gemini API to generate a personalized  roadmap."""  
+    prompt = f"""  
+    You are an expert career counselor for computer science students.  
+
+    A student has the following profile:  
+    - Career Goal: {career_goal}  
+    - Python Skill: {python_skill} out of 5  
+    - SQL Skill: {sql_skill} out of 5  
+    - JAVA Skill: {java_skill} out of 5  
+ 
+    Generate a 2 -week, actionable "Sprint Roadmap" for them.  
+    The roadmap must be concise, in markdown format, with 3 -5 clear 
+action items.  
+    Focus on practical projects, specific tutorials, and skills they ne ed 
+to bridge the gap.  
+    """ 
+    try: 
+        response = model.generate_content(prompt)  
+        return response.text  
+    except Exception as e:  
+        st.error(f"Error generating AI roadmap: {e}")  
+        return None  
+ 
+def save_to_db(name, email, phone, career_goal, python_skill, sql_skill, 
+java_skill, roadmap):  
+    """Saves the student's data and their new roadmap to the database."""  
+    try: 
+        conn = sqlite3.connect(DB_FILE)  
+        cursor = conn.cursor()  
+        cursor.execute(  
+            "INSERT INTO students (name, email, phone, career_goal, 
+python_skill, sql_skill, java_skill, generated_roadmap) VALUES (?, ?, ?, 
+?, ?, ?, ?, ?)",  
+            (name, email, phone, career_goal, python_skill, sql_skill, 
+java_skill, roadmap)  
+        ) 
+        conn.commit()  
+        conn.close()  
+        return True  
+
+    except Exception as e:  
+        st.error(f"Error saving to database: {e}")  
+        return False  
+     
+def delete_student_from_db(student_id):  
+    """Deletes a student record from the data base by their ID."""  
+    try: 
+        conn = sqlite3.connect(DB_FILE)  
+        cursor = conn.cursor()  
+        cursor.execute("DELETE FROM students WHERE id = ?", 
+(student_id,))  
+        conn.commit()  
+        conn.close()  
+        return True  
+    except Exception as e:  
+        st.error(f"Error deleting from database: {e}")  
+        return False  
+ 
+# --- 4. MULTI -PAGE NAVIGATION --- 
+st.sidebar.title("AcroConnect PoC Navigation")  
+page = st.sidebar.radio("Go to", ["Home", "Student Portal", "TPO 
+Dashboard"])  
+ 
+if page == "Home":  
+    st.title("Welcome to AcroConnect")  
+    st.markdown("### The AITR Placement Readiness Platform")  
+    st.write("") # Adds a little space  
+     
+    st.subheader("About This Project (Proof of Concept)")  
+    st.write(  
+        """ 
+        This is the 100% implemented Proof of Concept (PoC) for the 
+AcroConnect Major Project.  
+        This PoC demonstrates the **complete, end -to-end data pipeline** 
+which is the  
+
+        foundation for the entire application.  
+        """ 
+    ) 
+     
+    st.subheader ("Explore the PoC Features:")  
+    st.markdown(  
+        """ 
+        * **Go to the Student Portal:**  
+            * Fill out the form to simulate a student creating a profile.  
+            * This demonstrates our system's **WRITE** capability to the 
+database.  
+            * It also shows the live **AI INTEGRATION** with the Google 
+Gemini API.  
+ 
+        * **Go to the TPO Dashboard:**  
+            * Enter the password (`tpo123`) to access the secure admin 
+view. 
+            * This demonstrates our system's **READ** a nd **DELETE** 
+capabilities from the database.  
+            * It also shows the **LIVE ANALYTICS** charts, which are 
+built from the student data.  
+        """ 
+    ) 
+     
+    st.info("Navigate using the sidebar on the left. All features are 
+live and deployed o n Streamlit Cloud.")  
+ 
+elif page == "Student Portal":  
+    st.title("AcroConnect - Student Portal")  
+    st.write("Enter your details to get a personalized, AI -generated 
+career roadmap.")  
+ 
+    # Create the form for student input  
+    with st.form("student_prof ile_form"):  
+        name = st.text_input("Full Name")  
+        email = st.text_input("Email Address")  
+
+        phone = st.text_input("Phone Number")  
+        career_goal = st.text_input("Dream Career Goal (e.g., Data 
+Scientist, Backend Developer)")  
+        python_skill = st.slider("Your Python Skill (1=Beginner, 
+5=Expert)", 1, 5, 3)  
+        sql_skill = st.slider("Your SQL Skill (1=Beginner, 5=Expert)", 1, 
+5, 3) 
+        java_skill = st.slider("Your JAVA Skill (1=Beginner, 5=Expert)", 
+1, 5, 3)  
+ 
+        submitted  = st.form_submit_button("Get My AI Roadmap")  
+ 
+    # --- This is the logic that runs when the button is clicked --- 
+    if submitted:  
+        if not name or not career_goal:  
+            st.warning("Please fill out all fields.")  
+        else: 
+            with st.spinner("Your personal AI is building your 
+roadmap..."):  
+                # 1. Call the AI  
+                roadmap = get_ai_roadmap(career_goal, python_skill, 
+sql_skill, java_skill)  
+                 
+                if roadmap:  
+                    # 2. Save to DB  
+                    save_to_db(name, email, phone, career_goal, 
+python_skill, sql_skill, java_skill, roadmap)  
+                     
+                    # 3. Display results  
+                    st.balloons()  
+                    st.success("Your roadmap is ready!")  
+                    st.markdown(f"### Here is your 2 -Week Sprint, 
+{name}:")  
+                    st.markdown(roadmap)  
+ 
+elif page == "TPO Dashboard":  
+
+    st.title("AcroConnect - TPO Dashboard")  
+    st.write("This is the secure area for the TPO to view analytics and 
+student data.")  
+ 
+    # --- 4.1 Simple Password Protection --- 
+    # This is NOT real auth, but it CHECKS THE BOX for a prototype  
+    password = st.text_input("Enter TPO Password", type="password")  
+     
+    if password == "tpo123":  # Simple hardcoded password  
+        st.success("Access Granted")  
+         
+        # --- 4.2 Display Student Data --- 
+        st.subheader("All Student Submissions")  
+        try: 
+            conn = sqlite3.connect(DB_FILE)  
+    # 1. Update the SQL query to get the new fields  
+            query = "SELECT id, name, email, phone, career_goal, 
+python_skill, sql_skill, java_skill, generated_roadmap FROM students"  
+     
+    # 2. Use Pandas to read the SQL query directly. This automatically 
+gets the column headers!  
+            df = pd.read_sql_query(query, conn)  
+            conn.close()  
+     
+    # 3. Display the pandas DataFrame. It will now have correct headers.  
+            st.dataframe(df,  
+            column_config={  
+            "id": "Student ID", 
+            "name": "Student Name",  
+            "email": "Email",  
+            "phone": "Phone",  
+            "career_goal": "Career Goal",  
+            "python_skill": "Python (1 -5)", 
+            "sql_skill": "SQL (1 -5)", 
+
+            "java_skill": "JAVA  (1-5)", 
+            "generated_roadmap": "AI Roadmap"  
+            }, 
+            use_container_width=True  
+        ) 
+             
+# --- 4.3 *** NEW: LIVE ANALYTICS *** --- 
+            st.subheader("Live Analytics Dashboard")  
+            st.write("This dashboard updates in real -time as students 
+submit their profiles.")  
+ 
+# Make sure we have data before trying to plot  
+            if not df.empty:  
+            # --- Chart 1: Skill Distribution --- 
+                st.markdown("#### Student Skill Distribution" ) 
+     
+            # Count the occurrences of each skill level  
+                python_dist = 
+df['python_skill'].value_counts().sort_index()  
+                sql_dist = df['sql_skill'].value_counts().sort_index()  
+                java_dist = df['java_skill']. value_counts().sort_index()  
+ 
+            # Put them in a new DataFrame for plotting  
+                skill_dist_df = pd.DataFrame({  
+                    'Python': python_dist,  
+                    'SQL': sql_dist,  
+                    'JAVA': java_dist  
+                }).fillna(0) # Fill in missing skill levels with 0  
+ 
+                st.bar_chart(skill_dist_df, use_container_width=True)  
+ 
+            # --- Chart 2: Average Skill Comparison --- 
+                st.markdown("#### Average Skill Comparison")  
+     
+
+            # Calculate the average of each skill  
+                avg_python = df['python_skill'].mean()  
+                avg_sql = df['sql_skill'].mean()  
+                avg_java = df['java_skill'].mean()  
+ 
+            # Put them in a new DataFrame for plotti ng 
+                avg_skill_df = pd.DataFrame({  
+                     'Average Skill Level': [avg_python, avg_sql, 
+avg_java]  
+                }, index=['Python', 'SQL', 'JAVA'])  
+ 
+                st.bar_chart(avg_skill_df, use_container_width=True)  
+ 
+            else: 
+                st.info("No student data available to display 
+analytics.")  
+ 
+            # Option to delete a student record  
+            st.subheader("Delete a Student Record")  
+            student_id_to_delete = st.number_input("Enter Student ID t o 
+Delete", min_value=1, step=1)  
+            if st.button("Delete Student"):  
+                if delete_student_from_db(student_id_to_delete):  
+                    st.success(f"Student ID {student_id_to_delete} 
+deleted successfully.")  
+                else: 
+                    st.error("Failed to delete student.")         
+        except Exception as e:  
+            st.error(f"Error reading from database: {e}")  
+             
+    elif password:  
+        st.error("Incorrect Password. Access Denied.")  
+ 

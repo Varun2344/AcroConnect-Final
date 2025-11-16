@@ -1,0 +1,274 @@
+“ACROCONNECT”  
+A Major  Project  Synopsis  Submitted  to 
+Rajiv  Gandhi  Proudyogiki  Vishwavidyalaya,  Bhopal  (M.P.)  
+ 
+Towards  Partial  Fulfillment  for the Award 
+of 
+Bachelor  of Technology  in Computer  Science  & Information 
+Technology  
+ 
+Session:  July-Dec 2025  
+ 
+Submitted  by: Guided  by: 
+Varun  Purohit  (0827CY221148)  Prof.  Nidhu  Nigam  
+Varun Bhaisare (0827CI221147)  CSIT,  AITR,  Indore 
+Mohd. Ayan Mansuri (0827CI221093)  
+ 
+Acropolis Institute of Technology and Research 
+Bypass  Road,  Manglia  Square,  Manglia,  Indore,  (M.P.),  
+453771,  India  
+
+
+Project  Synopsis:  AcroConnect  
+Department  of Computer  Science  and Information  Technology,  AITR,  Indore  | Session  July-Dec 
+2025   
+ Synopsis  report  
+ 
+Project Proposal:  AcroConnect:  The Placement Readiness  Platform  
+Project  Category:  Artificial Intelligence API  and Data -Driven  Full Stack  Application  
+ 
+Problem  Statement:  
+ 
+The traditional college placement process, often reliant on manual data entry and disconnected 
+spreadsheets,  poses  a significant  threat  to student  outcomes  and institutional  efficiency.  The Training 
+& Placement  Office  (TPO) often lacks the tools to analyze student skill data in  real-time, while 
+students lack personalized, actionable guidance to bridge  the gap between  their skills  and industry 
+demands. This  leads  to administrative bottlenecks, missed opportunities, and student "analysis  
+paralysis" in a competitive job market.  AcroConnect proposes an  AI-powered web platform  that 
+analyzes  student  profiles  to provide  personalized  career  roadmaps,  while  simultaneously  delivering 
+powerful analytics and a management dashboard to the TPO.  
+Scope:  
+AcroConnect is designed for two primary user groups  within  AITR: Students (seeking career 
+guidance)  and the Training  & Placement  Office  (TPO)  (managing  the placement  lifecycle).  It helps 
+the TPO adopt  a data -driven strategy by providing a centralized database, analytics, and student - 
+matching tools.  
+In-Scope  Features:  
+ User  authentication  (separate,  secure  logins  for Students  and TPO  Admins).  
+ Student  Profile  form  (skills,  projects,  CGPA,  career  goals).  
+ AI-based  Recommendation  Engine  (Google  Gemini  API)  for personalized  roadmaps.  
+ PostgreSQL  Database  (for all student  profiles,  TPO  job postings,  and company  data).  
+ TPO  Admin  Dashboard  (analytics,  student  search,  job posting  management).  
+ Student  Dashboard  (to view  AI roadmap,  track  progress,  and see matched  jobs).  
+ Export  options  (PDF/CSV)  for TPO  reports.  
+
+Project  Synopsis:  AcroConnect  
+Department  of Computer  Science  and Information  Technology,  AITR,  Indore  | Session  July-Dec 
+2025   
+  
+Specific  Objectives:  
+The primary goal of the  AcroConnect project  is to develop and deploy  an intelligent platform that 
+guarantees  a data-driven,  efficient  placement  process  for AITR.  This involves  four key, measurable 
+objectives:  
+ AI Roadmap  Generation:  Develop  and implement  an AI-driven  logic  using  the Gemini  
+API capable of  achieving  a 90% relevance score  (via student feedback surveys) in 
+generating actionable career roadmaps.  
+ Centralized  Database  Development:  Establish  a structured  PostgreSQL  database  
+capable  of managing and normalizing profiles for 1000+ students  and 100+ job postings.  
+ TPO  Analytics  Platform:  Implement  a user-friendly  TPO  dashboard  enabling  
+administrators to filter the entire student database in < 3 seconds  and generate 
+downloadable PDF/CSV  
+reports.  
+ Placement Efficiency Promotion: Successfully demonstrate  the system's ability to 
+reduce the  TPO's  time-to-match  (time  taken  to find qualified  students for  a new  job) by 
+at least  50% compared to manual spreadsheet methods.  
+Stakeholders:  
+ AITR  Students:  Primary  users  benefiting  from  personalized  guidance.  
+ AITR  Training  & Placement  Office  (TPO):  Primary  users  benefiting  from  data 
+analytics and automation.  
+ College  Administration:  Stakeholders  ensuring  institutional  efficiency  and 
+improved placement metrics.  
+ Recruiters:  Secondary  beneficiaries  who receive  better -matched,  qualified  candidates.  
+ 
+ 
+Background:  
+ 
+Most college placement processes  today still depend on static Excel sheets  and manual data 
+collection.  This leads  to data silos,  administrative  overhead,  and a slow,  reactive  process.  Although 
+TPO  staff work diligently, they  lack the  tools  to query, filter, and  analyze their  "talent pool"  
+effectively. Simultaneously, students  are overwhelmed with  generic  advice  and struggle  to find  a 
+clear  path.  AcroConnect  provides  the solution.  It leverages  a modern  AI and database  architecture  to 
+simplify this complexity.  AcroConnect bridges  this gap by offering data -driven, personalized 
+roadmaps for students and  a powerful  analytics engine for the  TPO,  all in one platform.  With 
+AcroConnect,  AITR  can adopt  a placement  process  that benefits  both the institution  and its students.  
+
+Project  Synopsis:  AcroConnect  
+Department  of Computer  Science  and Information  Technology,  AITR,  Indore  | Session  July-Dec 
+2025   
+ Review  of Literature:  
+ 
+ 
+Reference  / 
+Study  Primary  Focus  Core  Technology  Missing  / Weak 
+Component  Why  AcroConnect  is 
+Superior  
+Khan,  et al. 
+(2024):  
+"University 
+Placement 
+Portal"  General  
+job board 
+for 
+students.  Web App (PHP,  MySQL)  Lacks proactive 
+analytics  and any 
+AI-driven 
+guidance; it's a 
+passive job list.  AcroConnect is a 
+prescriptive system 
+(recommends  roadmaps) 
+with an analytical core 
+(TPO dashboard), not  
+just a descriptive portal.  
+Chen & Roy 
+(2023):  "Ed-Tech  
+Analytics"  High -level 
+academic 
+performance 
+tracking.  Data  Viz (Tableau)  Focuses on 
+macro -level  
+academic  strategy, 
+not micro -level 
+career pathing for 
+individual  
+students.  Offers product -level 
+precision  (for a student's 
+career) by generating 
+personalized,  actionable 
+steps.  
+Patel  & Singh 
+(2024): "AI  
+CareerBot"  AI-based 
+chatbot for 
+generic  career 
+advice.  AI (Chatbot)  Lacks  integration 
+with the specific 
+college's job 
+openings or the 
+TPO's  database. 
+Its advice is not 
+actionable.  Integrates predictive AI 
+with the TPO's  real, live 
+database, making its 
+recommendations 
+relevant and 
+immediately  actionable.  
+AcroConnect 
+(Proposed 
+System)  Product - 
+specific, 
+balanced  
+TPO 
+analytics and 
+Student AI 
+guidance.  AI/ML + Full Stack Web 
+(Flask/Streamlit/PostgreSQL)  N/A - Combines  all 
+necessary 
+elements.  Unifies a TPO analytics 
+engine, a student 
+guidance  system,  and a 
+central  database  into a 
+single, comprehensive 
+solution.  
+ 
+Comparison: Previous works highlight generic  job portals, academic dashboards, or standalone  AI 
+chatbots.  They  lack a dedicated, integrated system that connects  an AI-recommendation engine for 
+students  directly to  the live TPO database  and analytics  dashboard.  AcroConnect bridges  this gap by 
+offering  a data-driven  system  that serves  both stakeholders  simultaneously,  empowering  students  and 
+administrators with actionable, real -time data.  
+
+Project  Synopsis:  AcroConnect  
+Department  of Computer  Science  and Information  Technology,  AITR,  Indore  | Session  July-Dec 
+2025   
+  
+Implementation  and Deployment  Considerations:  
+ Social  Benefit:  AcroConnect  empowers  students  for their  careers,  reduces  
+"placement anxiety," and promotes data -driven decision -making within the 
+institution.  
+ Environmental  Benefits:  By digitizing  the TPO's  entire  workflow  (forms,  
+reports, announcements), the system significantly reduces paper waste.  
+ Health,  Safety,  Legal,  and Cultural  Issues:  The system  must  be compliant  with data 
+privacy laws  (e.g., handling student  PII securely).  The AI must be monitored for 
+fairness  and bias.  
+ Sustainable  Development:  The project  provides  a long-term,  scalable,  and 
+sustainable software solution that replaces manual, inefficient processes.  
+ Ethical  Principles:  Built  on transparency.  TPO  data is for administrative  use, and AI 
+advice  is clearly labeled as a "recommendation," not a directive.  
+ Professional  Ethics:  Development  will follow  industry  best practices,  including  
+version control (Git), code documentation, and secure coding standards.  
+ 
+ 
+Technological Know -How  Required:  
+ 
+ Tools  & Technologies:  
+ 
+o AI/ML  Models  (Google  Gemini  API).  
+ 
+o Web  Development  (Flask,  Streamlit,  HTML,  CSS).  
+ 
+o Database  (PostgreSQL).  
+ 
+o Cloud  Platforms  (Render/Heroku,  Streamlit  Community  Cloud).  
+ 
+ Hardware  Requirements:  Standard  cloud  server  for deployment.  No specialized  
+hardware  is needed  for development or use.  
+
+Project  Synopsis:  AcroConnect  
+Department  of Computer  Science  and Information  Technology,  AITR,  Indore  | Session  July-Dec 
+2025   
+ Key Personnel  and Skills:  
+ 
+Name  Enrollment  
+Number  Technical  Expertise  
+Varun  Purohit  0827CI221148  Project  Lead,  Backend  (Flask),  AI (Gemini),  DB (PostgreSQL)  
+Varun  Bhaisare  0827CI221147  Frontend  (Streamlit),  Student  Portal  UI/UX  
+Mohd.  Ayan  Mansuri  0827CI221093  Frontend  (Flask),  TPO  Dashboard,  Data  Visualization  
+Prof.  Nidhi  Nigam  Guide  Project  Guidance,  Expertise  
+ 
+Proposed  Timetable:  
+ 
+Module  Description  of Work  Expected 
+Duration  
+Module 
+One System  Design  and Architecture:  Define  final requirements,  design  PostgreSQL 
+schema, and set up Git repository.   
+3 Weeks  
+Module 
+Two Database  & Backend  API: Creation  of PostgreSQL  database.  Development  of 
+core Flask API (auth, CRUD operations).   
+4 Weeks  
+Module 
+Three  TPO  Dashboard  Development:  Build  Flask/Jinja2  frontend,  admin  login,  
+analytics charts, and student search/filter logic.   
+5 Weeks  
+Module 
+Four Student  Portal  Development:  Build  Streamlit  frontend,  student  login,  profile 
+forms, and connect to Flask API .  
+4 Weeks  
+Module 
+Five AI Integration,  Testing  & Deployment:  Integrate  Gemini  API. Conduct  full-
+system testing, deploy to cloud, and write final report.   
+3 Weeks  
+ 
+Project  Benefits:  
+ Data -Driven TPO:  Empowers the TPO  with real -time analytics, replacing guesswork 
+with data.  
+ Student  Empowerment:  Promotes  career  readiness  by providing  clear,  personalized,  
+and actionable AI -driven roadmaps.  
+ Scalability:  The system  is built to scale  from  one department  to the entire  institution.  
+ Efficiency:  Automates  manual  tasks  (matching,  reporting),  saving  hundreds  of 
+administrative hours.  
+ Awareness:  Helps  students  and TPO  align  with current  industry  demands.  
+
+Project  Synopsis:  AcroConnect  
+Department  of Computer  Science  and Information  Technology,  AITR,  Indore  | Session  July-Dec 
+2025   
+ References:  
+1. Khan,  A., & Ahmed,  S. (2024).  A Study  on University  Placement  Portal  Systems.  
+International  Journal  of Web & App Technology,  5(2), 45-51. 
+2. Chen,  L., & Roy,  S. (2023).  Data  Analytics  in Higher  Education:  A Framework  for Student 
+Success. Journal of Educational Data Mining, 15 (1), 112 -130. DOI: 
+https://doi.org/10.5281/zenodo.123456  
+3. Patel,  R., & Singh,  V. (2024).  AI-Driven  Chatbots  for Personalized  Career  Counseling.  
+Proceedings  of the 2024  International  Conference  on AI in Education  (AIED) . Springer.  
+4. Brown, T., et al. (2020). Language Models  are Few -Shot Learners. Advances in Neural 
+Information  Processing  Systems,  33. (This  is the foundational  paper  for GPT -3, relevant  to 
+our Gemini API usage).  

@@ -1,0 +1,25 @@
+# Sample Render "Infrastructure as Code" config for two services: backend (web) and frontend (web)
+# You'll still need to connect this repo to your Render account and set env vars.
+services:
+  - type: web
+    name: acroconnect-backend
+    env: docker
+    dockerfilePath: backend/Dockerfile
+    plan: free
+    region: oregon
+    envVars:
+      - key: DATABASE_URL
+        scope: env
+      - key: GEMINI_API_KEY
+        scope: env
+      - key: SECRET_KEY
+        scope: env
+  - type: web
+    name: acroconnect-frontend
+    env: docker
+    dockerfilePath: frontend/Dockerfile
+    plan: free
+    region: oregon
+    envVars:
+      - key: API_URL
+        scope: env
