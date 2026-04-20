@@ -52,7 +52,7 @@ Complete step-by-step instructions to deploy AcroConnect on Render with Postgres
    Value: <paste-your-new-rotated-API-key-from-Google-Cloud>
    
    Key: DJANGO_SECRET_KEY
-   Value: django-insecure-9q2w3e4r5t6y7u8i9o0p1a2s3d4f5g6h7j8k9l0z1x2c3v4b5n6m7
+   Value: <generate-a-strong-random-secret>
    
    Key: DATABASE_URL
    Value: <paste-the-DATABASE_URL-from-Step-2>
