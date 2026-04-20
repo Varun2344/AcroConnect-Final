@@ -19,4 +19,4 @@ ENV DJANGO_SETTINGS_MODULE=acroconnect_backend.settings
 EXPOSE 8000
 
 # Run migrations then start gunicorn
-CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn acroconnect_backend.wsgi:application --bind 0.0.0.0:8000 --workers 3"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn acroconnect_backend.wsgi:application --bind 0.0.0.0:8000 --workers 3"]
