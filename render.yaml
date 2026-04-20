@@ -6,20 +6,20 @@ services:
     env: docker
     dockerfilePath: backend/Dockerfile
     plan: free
-    region: oregon
+    region: singapore
     envVars:
       - key: DATABASE_URL
         scope: env
       - key: GEMINI_API_KEY
         scope: env
-      - key: SECRET_KEY
+      - key: DJANGO_SECRET_KEY
         scope: env
   - type: web
     name: acroconnect-frontend
     env: docker
     dockerfilePath: frontend/Dockerfile
     plan: free
-    region: oregon
+    region: singapore
     envVars:
       - key: API_URL
         scope: env
