@@ -25,7 +25,8 @@ docker-compose up --build
 2. Add environment variables on Render:
    - `DATABASE_URL` (Postgres URL)
    - `GEMINI_API_KEY` (Gemini/Google API key)
-   - `SECRET_KEY` (Django secret key)
+   - `DJANGO_SECRET_KEY` (Django secret key)
+   - `API_URL` (frontend service -> backend service URL)
 3. Connect the repo and deploy. See `render.yaml` for sample config.
 
 ## Postgres in production

@@ -2,12 +2,13 @@ import streamlit as st
 
 import pandas as pd
 import requests
+import os
 
 
 
 # API base URL
 
-API_URL = "http://127.0.0.1:8000"
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 
 
 
@@ -26,6 +27,19 @@ DEFAULT_SESSION_STATE = {
     "nav_option": None,
 
 }
+
+
+def show_api_connection_hint() -> None:
+    st.caption(f"API endpoint: `{API_URL}`")
+
+
+def display_http_error(prefix: str, response: requests.Response) -> None:
+    try:
+        error_data = response.json()
+        message = error_data.get("detail") or error_data.get("message") or str(error_data)
+    except ValueError:
+        message = response.text or "Unexpected server response."
+    st.error(f"{prefix}: {message}")
 
 
 
@@ -54,6 +68,7 @@ def reset_session_state() -> None:
 def show_login_page() -> None:
 
     st.title("Welcome to AcroConnect")
+    show_api_connection_hint()
 
     login_tab, register_tab = st.tabs(["Login", "Register (New Student)"])
 
@@ -100,29 +115,7 @@ def show_login_page() -> None:
                     )
 
                     if response.status_code != 200:
-
-                        # If login fails, show the error
-
-                        try:
-
-                            error_data = response.json()
-
-                            error_message = (
-
-                                error_data.get("detail")
-
-                                or error_data.get("message")
-
-                                or str(error_data)
-
-                            )
-
-                        except ValueError:
-
-                            error_message = response.text or "Unable to log in."
-
-                        st.error(f"Login failed: {error_message}")
-
+                        display_http_error("Login failed", response)
                         return
 
                     # If we reach here, status code is 200
@@ -247,26 +240,7 @@ def show_login_page() -> None:
                             st.success("Registration successful! You can now log in.")
 
                     else:
-
-                        try:
-
-                            error_data = response.json()
-
-                            error_message = (
-
-                                error_data.get("detail")
-
-                                or error_data.get("message")
-
-                                or str(error_data)
-
-                            )
-
-                        except ValueError:
-
-                            error_message = response.text or "Unable to register."
-
-                        st.error(f"Registration failed: {error_message}")
+                        display_http_error("Registration failed", response)
 
                 except requests.RequestException as exc:
 
@@ -298,7 +272,7 @@ def show_profile_page() -> None:
             profile_data = response.json()
             profile_id = profile_data.get("id")
         else:
-            st.error(f"Failed to fetch profile: {response.status_code}")
+            display_http_error("Failed to fetch profile", response)
             profile_data = {}
             profile_id = None
     except requests.RequestException as e:
@@ -349,16 +323,7 @@ def show_profile_page() -> None:
                 st.success("Profile updated successfully!")
                 st.rerun()
             else:
-                try:
-                    error_data = update_response.json()
-                    error_message = (
-                        error_data.get("detail")
-                        or error_data.get("message")
-                        or str(error_data)
-                    )
-                except ValueError:
-                    error_message = update_response.text or "Unable to update profile."
-                st.error(f"Update failed: {error_message}")
+                display_http_error("Update failed", update_response)
         except requests.RequestException as e:
             st.error(f"Error updating profile: {e}")
 
@@ -385,7 +350,7 @@ def show_profile_page() -> None:
                             st.success(f"Removed {skill_name}")
                             st.rerun()
                         else:
-                            st.error("Failed to remove skill.")
+                            display_http_error("Failed to remove skill", delete_response)
                     except requests.RequestException as e:
                         st.error(f"Error removing skill: {e}")
             st.progress(skill_level / 5.0 if skill_level <= 5 else 1.0)
@@ -431,22 +396,13 @@ def show_profile_page() -> None:
                             st.success("Skill added successfully!")
                             st.rerun()
                         else:
-                            try:
-                                error_data = add_response.json()
-                                error_message = (
-                                    error_data.get("detail")
-                                    or error_data.get("message")
-                                    or str(error_data)
-                                )
-                            except ValueError:
-                                error_message = add_response.text or "Unable to add skill."
-                            st.error(f"Failed to add skill: {error_message}")
+                            display_http_error("Failed to add skill", add_response)
                     except requests.RequestException as e:
                         st.error(f"Error adding skill: {e}")
             else:
                 st.info("All available skills have been added to your profile.")
         else:
-            st.error(f"Failed to fetch skills: {skills_response.status_code}")
+            display_http_error("Failed to fetch skills", skills_response)
     except requests.RequestException as e:
         st.error(f"Error fetching skills: {e}")
 
@@ -476,7 +432,7 @@ def show_roadmap_page() -> None:
                 if r.get("profile", {}).get("user", {}).get("id") == user_id
             ]
         else:
-            st.error(f"Failed to fetch roadmaps: {response.status_code}")
+            display_http_error("Failed to fetch roadmaps", response)
             user_roadmaps = []
     except requests.RequestException as e:
         st.error(f"Error fetching roadmaps: {e}")
@@ -512,16 +468,7 @@ def show_roadmap_page() -> None:
                     st.success("✅ Roadmap generated successfully!")
                     st.rerun()
                 else:
-                    try:
-                        error_data = generate_response.json()
-                        error_message = (
-                            error_data.get("detail")
-                            or error_data.get("message")
-                            or str(error_data)
-                        )
-                    except ValueError:
-                        error_message = generate_response.text or "Unable to generate roadmap."
-                    st.error(f"❌ Failed to generate roadmap: {error_message}")
+                    display_http_error("Failed to generate roadmap", generate_response)
             except requests.RequestException as e:
                 st.error(f"❌ Error generating roadmap: {e}")
 
@@ -582,7 +529,7 @@ def show_job_board_page() -> None:
             else:
                 st.info("No job postings available at the moment. Check back later!")
         else:
-            st.error(f"Failed to fetch job postings: {response.status_code}")
+            display_http_error("Failed to fetch job postings", response)
     except requests.RequestException as e:
         st.error(f"Error fetching job postings: {e}")
 
@@ -609,7 +556,7 @@ def show_tpo_dashboard_page() -> None:
         if response.status_code == 200:
             profiles = response.json()
         else:
-            st.error(f"Failed to fetch student profiles: {response.status_code}")
+            display_http_error("Failed to fetch student profiles", response)
             profiles = []
     except requests.RequestException as e:
         st.error(f"Error fetching student profiles: {e}")
@@ -691,35 +638,30 @@ def show_tpo_dashboard_page() -> None:
         # Delete Student Function
         st.write("### Delete Student")
         with st.form("delete_student_form", clear_on_submit=True):
-            user_id_to_delete = st.number_input(
-                "Enter User ID to delete",
+            profile_id_to_delete = st.number_input(
+                "Enter Student Profile ID to delete",
                 min_value=1,
                 step=1,
                 key="delete_user_id"
             )
+            confirm_delete = st.checkbox("I understand this action is permanent.", value=False)
             delete_submit = st.form_submit_button("Delete Student", type="primary")
 
             if delete_submit:
+                if not confirm_delete:
+                    st.warning("Please confirm deletion before continuing.")
+                    return
                 try:
                     delete_response = requests.delete(
-                        f"{API_URL}/api/v1/student-profiles/{user_id_to_delete}/",
+                        f"{API_URL}/api/v1/student-profiles/{profile_id_to_delete}/",
                         headers=headers,
                         timeout=10,
                     )
                     if delete_response.status_code in (200, 204):
-                        st.success(f"Student with User ID {user_id_to_delete} deleted successfully!")
+                        st.success(f"Student profile {profile_id_to_delete} deleted successfully!")
                         st.rerun()
                     else:
-                        try:
-                            error_data = delete_response.json()
-                            error_message = (
-                                error_data.get("detail")
-                                or error_data.get("message")
-                                or str(error_data)
-                            )
-                        except ValueError:
-                            error_message = delete_response.text or "Unable to delete student."
-                        st.error(f"Delete failed: {error_message}")
+                        display_http_error("Delete failed", delete_response)
                 except requests.RequestException as e:
                     st.error(f"Error deleting student: {e}")
 
@@ -764,16 +706,7 @@ def show_job_management_page() -> None:
                         st.success("Job posted successfully!")
                         st.rerun()
                     else:
-                        try:
-                            error_data = response.json()
-                            error_message = (
-                                error_data.get("detail")
-                                or error_data.get("message")
-                                or str(error_data)
-                            )
-                        except ValueError:
-                            error_message = response.text or "Unable to post job."
-                        st.error(f"Failed to post job: {error_message}")
+                        display_http_error("Failed to post job", response)
                 except requests.RequestException as e:
                     st.error(f"Error posting job: {e}")
 
@@ -832,7 +765,7 @@ def show_job_management_page() -> None:
                                         st.success(f"Job '{title}' deleted successfully!")
                                         st.rerun()
                                     else:
-                                        st.error("Failed to delete job.")
+                                        display_http_error("Failed to delete job", delete_response)
                                 except requests.RequestException as e:
                                     st.error(f"Error deleting job: {e}")
                 else:
@@ -840,7 +773,7 @@ def show_job_management_page() -> None:
             else:
                 st.info("No job postings available.")
         else:
-            st.error(f"Failed to fetch job postings: {response.status_code}")
+            display_http_error("Failed to fetch job postings", response)
     except requests.RequestException as e:
         st.error(f"Error fetching job postings: {e}")
 
@@ -849,6 +782,7 @@ def show_job_management_page() -> None:
 def show_main_app() -> None:
 
     st.title(f"Welcome, {st.session_state.user_email or 'User'}")
+    show_api_connection_hint()
 
     if st.sidebar.button("Logout"):
 

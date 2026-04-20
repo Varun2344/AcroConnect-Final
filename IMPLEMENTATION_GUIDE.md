@@ -92,7 +92,7 @@ python manage.py runserver
 
 ### Step 2: Set Gemini API Key
 ```powershell
-$env:GEMINI_API_KEY = "AIzaSyBUNzTdzHsB5qMpj8Izqb5MdhyF0KAOfNk"
+$env:GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"
 ```
 
 ### Step 3: Frontend Setup

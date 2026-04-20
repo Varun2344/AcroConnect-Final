@@ -3,6 +3,7 @@ import logging
 
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -11,10 +12,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 # Try to import and configure Gemini API (optional)
 try:
     import google.generativeai as genai
-    # Get API key from environment variable, or use the provided key as fallback
-    api_key = os.getenv("GEMINI_API_KEY", "AIzaSyBUNzTdzHsB5qMpj8Izqb5MdhyF0KAOfNk")
-    genai.configure(api_key=api_key)
-    GEMINI_AVAILABLE = True
+    api_key = os.getenv("GEMINI_API_KEY")
+    if api_key:
+        genai.configure(api_key=api_key)
+        GEMINI_AVAILABLE = True
+    else:
+        GEMINI_AVAILABLE = False
 except ImportError:
     GEMINI_AVAILABLE = False
     genai = None
@@ -53,6 +56,16 @@ class CustomUserViewSet(viewsets.ModelViewSet):
             return [AllowAny()]
         return [permissions.IsAuthenticated()]
 
+    def get_queryset(self):
+        # Restrict user listing to TPOs; regular users can only see themselves.
+        if self.request.user.is_tpo:
+            return CustomUser.objects.all()
+        return CustomUser.objects.filter(id=self.request.user.id)
+
+    def perform_create(self, serializer):
+        # Public registration should never create privileged users.
+        serializer.save(is_tpo=False)
+
     @action(detail=False, methods=["get"], permission_classes=[permissions.IsAuthenticated])
     def me(self, request):
         """
@@ -67,17 +80,49 @@ class SkillViewSet(viewsets.ModelViewSet):
     serializer_class = SkillSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_permissions(self):
+        if self.request.method in permissions.SAFE_METHODS:
+            return [permissions.IsAuthenticated()]
+        return [permissions.IsAdminUser()]
+
 
 class StudentSkillSetViewSet(viewsets.ModelViewSet):
     queryset = StudentSkillSet.objects.select_related("student_profile", "skill")
     serializer_class = StudentSkillSetSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        queryset = StudentSkillSet.objects.select_related("student_profile", "skill")
+        if self.request.user.is_tpo:
+            return queryset
+        return queryset.filter(student_profile__user=self.request.user)
+
+    def perform_create(self, serializer):
+        # Students can only create skill assignments for their own profile.
+        if self.request.user.is_tpo:
+            serializer.save()
+            return
+        profile, _ = StudentProfile.objects.get_or_create(
+            user=self.request.user,
+            defaults={
+                "full_name": self.request.user.get_full_name() or self.request.user.username,
+                "phone": "",
+                "cgpa": 0.0,
+            },
+        )
+        serializer.save(student_profile=profile)
+
 
 class StudentProfileViewSet(viewsets.ModelViewSet):
     queryset = StudentProfile.objects.select_related("user").prefetch_related("student_skill_set__skill")
     serializer_class = StudentProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = StudentProfile.objects.select_related("user").prefetch_related("student_skill_set__skill")
+        if self.request.user.is_tpo:
+            return queryset
+        return queryset.filter(user=self.request.user)
 
     @action(detail=False, methods=["get", "patch"], permission_classes=[permissions.IsAuthenticated])
     def me(self, request):
@@ -109,11 +154,43 @@ class JobPostingViewSet(viewsets.ModelViewSet):
     serializer_class = JobPostingSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_permissions(self):
+        if self.request.method in permissions.SAFE_METHODS:
+            return [permissions.IsAuthenticated()]
+        return [permissions.IsAuthenticated()]
+
+    def get_queryset(self):
+        queryset = JobPosting.objects.select_related("tpo_user").prefetch_related("required_skills_details__skill")
+        if self.request.user.is_tpo:
+            return queryset
+        return queryset.all()
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_tpo:
+            raise PermissionDenied("Only TPO users can create job postings.")
+        serializer.save(tpo_user=self.request.user)
+
+    def perform_update(self, serializer):
+        if not self.request.user.is_tpo:
+            raise PermissionDenied("Only TPO users can update job postings.")
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if not self.request.user.is_tpo:
+            raise PermissionDenied("Only TPO users can delete job postings.")
+        instance.delete()
+
 
 class RoadmapViewSet(viewsets.ModelViewSet):
     queryset = Roadmap.objects.select_related("profile", "profile__user")
     serializer_class = RoadmapSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Roadmap.objects.select_related("profile", "profile__user")
+        if self.request.user.is_tpo:
+            return queryset
+        return queryset.filter(profile__user=self.request.user)
 
 
 class GenerateRoadmapView(APIView):

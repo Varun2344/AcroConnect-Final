@@ -297,10 +297,11 @@
 ## 🔄 Deployment Readiness
 
 ### Pre-Deployment
-- [ ] DEBUG = False in production settings
-- [ ] Strong SECRET_KEY generated
+- [ ] DEBUG=False set in environment
+- [ ] Strong DJANGO_SECRET_KEY generated
 - [ ] ALLOWED_HOSTS configured
-- [ ] CORS_ALLOWED_ORIGINS set for production domain
+- [ ] CORS_ALLOWED_ORIGINS set for frontend production domain
+- [ ] CSRF_TRUSTED_ORIGINS set for backend production domain
 - [ ] GEMINI_API_KEY set as environment variable
 - [ ] Database backups configured
 - [ ] SSL/HTTPS configured

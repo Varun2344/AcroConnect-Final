@@ -33,7 +33,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             "is_tpo",
             "is_active",
         ]
-        read_only_fields = ["id", "is_active"]
+        read_only_fields = ["id", "is_active", "is_tpo"]
 
     def create(self, validated_data):
         # Extract fields that don't belong to User model
@@ -209,7 +209,7 @@ class StudentProfileSerializer(serializers.ModelSerializer):
 class JobPostingSerializer(serializers.ModelSerializer):
     tpo_user = CustomUserSerializer(read_only=True)
     tpo_user_id = serializers.PrimaryKeyRelatedField(
-        queryset=CustomUser.objects.all(), source="tpo_user", write_only=True
+        queryset=CustomUser.objects.all(), source="tpo_user", write_only=True, required=False
     )
     required_skills = RequiredSkillSerializer(
         source="required_skills_details", many=True, read_only=True

@@ -51,14 +51,23 @@ Complete step-by-step instructions to deploy AcroConnect on Render with Postgres
    Key: GEMINI_API_KEY
    Value: <paste-your-new-rotated-API-key-from-Google-Cloud>
    
-   Key: SECRET_KEY
+   Key: DJANGO_SECRET_KEY
    Value: django-insecure-9q2w3e4r5t6y7u8i9o0p1a2s3d4f5g6h7j8k9l0z1x2c3v4b5n6m7
    
    Key: DATABASE_URL
    Value: <paste-the-DATABASE_URL-from-Step-2>
    
    Key: ALLOWED_HOSTS
-   Value: *
+   Value: acroconnect-backend.onrender.com
+
+   Key: DEBUG
+   Value: False
+
+   Key: CORS_ALLOWED_ORIGINS
+   Value: https://acroconnect-frontend.onrender.com
+
+   Key: CSRF_TRUSTED_ORIGINS
+   Value: https://acroconnect-backend.onrender.com
    ```
 6. Click **"Create Web Service"**
 7. Render will start building — this takes 5-10 minutes
@@ -100,7 +109,7 @@ After backend is deployed, run migrations to initialize the database:
 4. Scroll down and click **"Advanced"**
 5. Add environment variable:
    ```
-   Key: BACKEND_URL
+   Key: API_URL
    Value: <paste-the-backend-URL-from-Step-3>
    ```
    Example: `https://acroconnect-backend.onrender.com`
@@ -128,7 +137,7 @@ After backend is deployed, run migrations to initialize the database:
 
 | Issue | Solution |
 |-------|----------|
-| Frontend shows error connecting to backend | Check `BACKEND_URL` env var matches backend service URL exactly (including `https://` and no trailing `/`) |
+| Frontend shows error connecting to backend | Check `API_URL` env var matches backend service URL exactly (including `https://` and no trailing `/`) |
 | Roadmap generation fails | Verify `GEMINI_API_KEY` is set and valid (your new rotated key) |
 | Database connection error | Verify `DATABASE_URL` is correct; check Postgres service is running |
 | Build fails | Check Render logs (Logs tab) for error messages; common: missing dependencies in `requirements.txt` |
