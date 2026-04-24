@@ -34,7 +34,7 @@ Write-Host "Starting Django backend (API)..." -ForegroundColor Cyan
 $backendProc = Start-Process powershell -PassThru -WorkingDirectory $backend -ArgumentList @(
   "-NoExit",
   "-Command",
-  "$backendPy manage.py runserver 127.0.0.1:8000"
+  "& '$backendPy' manage.py runserver 127.0.0.1:8000"
 )
 
 # Wait briefly for port 8000 to open
@@ -62,7 +62,7 @@ Write-Host "Starting Streamlit portal (UI)..." -ForegroundColor Cyan
 $frontendProc = Start-Process powershell -PassThru -WorkingDirectory $frontend -ArgumentList @(
   "-NoExit",
   "-Command",
-  "`$env:API_URL='http://127.0.0.1:8000'; $frontendPy -m streamlit run app_FIXED.py --server.port 8501"
+  "`$env:API_URL='http://127.0.0.1:8000'; & '$frontendPy' -m streamlit run app.py --server.port 8501"
 )
 
 Start-Sleep -Seconds 2

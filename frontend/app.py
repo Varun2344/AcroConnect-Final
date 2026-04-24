@@ -3,12 +3,308 @@ import streamlit as st
 import pandas as pd
 import requests
 import os
+import time
+from datetime import datetime
 
 
 
 # API base URL
 
-API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8000").rstrip("/")
+
+st.set_page_config(
+    page_title="AcroConnect",
+    page_icon="🎓",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+
+def _inject_global_styles() -> None:
+    st.markdown(
+        """
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+
+  /* Global Typography & Theme */
+  html, body, [class*="css"]  {
+    font-family: 'Inter', sans-serif !important;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 600;
+  }
+
+  /* Base Streamlit Overrides */
+  .stApp {
+    background: radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.08), transparent 25%),
+                #0f172a; /* Slate 900 */
+    color: #f8fafc;
+  }
+  
+  /* Sidebar Styling */
+  [data-testid="stSidebar"] {
+    background-color: rgba(15, 23, 42, 0.6) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-right: 1px solid rgba(255,255,255,0.05);
+  }
+  
+  /* Inputs & Buttons Styling */
+  .stTextInput>div>div>input, .stTextArea>div>div>textarea, .stNumberInput>div>div>input {
+    background-color: rgba(30, 41, 59, 0.7) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 8px !important;
+    color: #f8fafc !important;
+    transition: all 0.3s ease;
+  }
+  .stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus, .stNumberInput>div>div>input:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
+  }
+
+  /* Primary Button Styling */
+  .stButton>button[kind="primary"] {
+    background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1rem !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3), 0 2px 4px -1px rgba(99, 102, 241, 0.2) !important;
+  }
+  .stButton>button[kind="primary"]:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 8px -1px rgba(99, 102, 241, 0.4), 0 4px 6px -1px rgba(99, 102, 241, 0.3) !important;
+  }
+  
+  /* Secondary Button Styling */
+  .stButton>button[kind="secondary"] {
+    background: rgba(30, 41, 59, 0.7) !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+  }
+  .stButton>button[kind="secondary"]:hover {
+    background: rgba(51, 65, 85, 0.9) !important;
+    border-color: rgba(255,255,255,0.2) !important;
+  }
+
+  /* Expanders Styling */
+  .streamlit-expanderHeader {
+    background-color: rgba(30, 41, 59, 0.5) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    transition: background-color 0.2s ease !important;
+  }
+  .streamlit-expanderHeader:hover {
+    background-color: rgba(30, 41, 59, 0.8) !important;
+  }
+
+  /* Metric Cards Styling */
+  [data-testid="metric-container"] {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+  }
+  [data-testid="metric-container"]:hover {
+    transform: translateY(-2px);
+    border-color: rgba(99, 102, 241, 0.3);
+  }
+
+  /* Dataframe Styling */
+  [data-testid="stDataFrame"] {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  /* Custom Classes */
+  .acro-hero {
+    padding: 40px 32px;
+    border-radius: 24px;
+    background: radial-gradient(1200px 600px at 10% 0%,
+      rgba(99, 102, 241, 0.15) 0%,
+      rgba(16, 185, 129, 0.05) 45%,
+      rgba(15, 23, 42, 0) 75%),
+      linear-gradient(135deg, rgba(30, 41, 59, 0.4), rgba(2, 6, 23, 0.6));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .acro-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  }
+  .acro-hero h1 { 
+    margin: 0 0 12px 0; 
+    font-size: 48px; 
+    line-height: 1.1; 
+    background: linear-gradient(to right, #ffffff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+  }
+  .acro-hero p { 
+    margin: 0; 
+    font-size: 18px; 
+    color: rgba(226, 232, 240, 0.8); 
+    line-height: 1.6;
+    max-width: 600px;
+  }
+  .acro-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    color: #818cf8;
+    font-size: 13px;
+    font-weight: 500;
+    margin-right: 8px;
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(8px);
+  }
+  .acro-card {
+    padding: 24px;
+    border-radius: 20px;
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    height: 100%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(12px);
+  }
+  .acro-card:hover {
+    transform: translateY(-4px);
+    background: rgba(30, 41, 59, 0.6);
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  .acro-card h3 { 
+    margin-top: 0; 
+    color: #f8fafc;
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+  }
+  .acro-muted { 
+    color: #94a3b8; 
+    line-height: 1.5;
+    font-size: 0.95rem;
+  }
+</style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def show_public_landing() -> None:
+    _inject_global_styles()
+
+    st.markdown(
+        """
+<div class="acro-hero">
+  <div class="acro-pill">Placement & Career Guidance</div>
+  <div class="acro-pill">AI Roadmaps (Gemini)</div>
+  <div class="acro-pill">Student Profiles</div>
+  <div class="acro-pill">Job Board</div>
+  <h1>AcroConnect</h1>
+  <p>One portal for students and faculty/TPO — sign in once and get the right dashboard automatically.</p>
+</div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.write("")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.markdown(
+            """
+<div class="acro-card">
+  <h3>For Students</h3>
+  <div class="acro-muted">Build your profile, manage skills, and generate an AI learning roadmap aligned to your career goal.</div>
+</div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with c2:
+        st.markdown(
+            """
+<div class="acro-card">
+  <h3>For Faculty / TPO</h3>
+  <div class="acro-muted">View student analytics, manage job postings, and help guide placements — all inside this same portal.</div>
+</div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with c3:
+        st.markdown(
+            """
+<div class="acro-card">
+  <h3>Single Website</h3>
+  <div class="acro-muted">The Django backend runs as an API service; the full user-facing website is this portal.</div>
+</div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    st.write("")
+    a1, a2, a3 = st.columns([1, 1, 1])
+    with a1:
+        if st.button("Log in", type="primary", use_container_width=True):
+            st.session_state.public_page = "login"
+            st.rerun()
+    with a2:
+        if st.button("Register (New Student)", use_container_width=True):
+            st.session_state.public_page = "register"
+            st.rerun()
+    with a3:
+        if st.button("About", use_container_width=True):
+            st.session_state.public_page = "about"
+            st.rerun()
+
+
+def show_about_page() -> None:
+    _inject_global_styles()
+    st.markdown(
+        """
+<div class="acro-hero">
+  <h1>About AcroConnect</h1>
+  <p>A university placement & career guidance platform: student profiles, job postings, and AI-generated learning roadmaps.</p>
+</div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.write("")
+    st.subheader("How it works")
+    st.markdown(
+        """
+- **One Login**: same login screen for everyone.
+- **Role-based Routing**: faculty/TPO accounts open the **TPO Dashboard**; students open the **Student Dashboard**.
+- **Registration**: creates **student accounts only** by default.
+- **Faculty/TPO Accounts**: created by the developer (superuser) in the backend.
+        """
+    )
+    st.subheader("What you can demo quickly")
+    st.markdown(
+        """
+- Student: register → log in → update profile/skills → generate AI roadmap → view job board.
+- Faculty/TPO: log in → analytics of students → post & manage job postings.
+        """
+    )
 
 
 
@@ -25,21 +321,9 @@ DEFAULT_SESSION_STATE = {
     "user_id": None,
 
     "nav_option": None,
+    "public_page": "home",
 
 }
-
-
-def show_api_connection_hint() -> None:
-    st.caption(f"API endpoint: `{API_URL}`")
-
-
-def display_http_error(prefix: str, response: requests.Response) -> None:
-    try:
-        error_data = response.json()
-        message = error_data.get("detail") or error_data.get("message") or str(error_data)
-    except ValueError:
-        message = response.text or "Unexpected server response."
-    st.error(f"{prefix}: {message}")
 
 
 
@@ -65,10 +349,44 @@ def reset_session_state() -> None:
 
 
 
+def handle_auth_failure(response) -> bool:
+    """
+    Detect JWT auth failures, reset session, and redirect to login.
+    Returns True when auth failure was handled.
+    """
+    if response is None or response.status_code != 401:
+        return False
+
+    message = "Session expired or invalid token. Please log in again."
+    try:
+        data = response.json()
+        if isinstance(data, dict):
+            detail = data.get("detail") or data.get("message")
+            if detail:
+                message = f"{message} ({detail})"
+    except ValueError:
+        pass
+
+    reset_session_state()
+    st.error(message)
+    st.rerun()
+    return True
+
+
 def show_login_page() -> None:
 
-    st.title("Welcome to AcroConnect")
-    show_api_connection_hint()
+    _inject_global_styles()
+
+    st.markdown(
+        """
+<div class="acro-hero">
+  <h1>Sign in to AcroConnect</h1>
+  <p>Enter your credentials. Faculty/TPO users will be routed to the TPO dashboard automatically.</p>
+</div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.write("")
 
     login_tab, register_tab = st.tabs(["Login", "Register (New Student)"])
 
@@ -108,14 +426,38 @@ def show_login_page() -> None:
 
                         f"{API_URL}/api/token/",
 
-                        data=payload,
+                        # SimpleJWT expects JSON; form-encoded can fail validation.
+                        json=payload,
 
                         timeout=10,
 
                     )
 
                     if response.status_code != 200:
-                        display_http_error("Login failed", response)
+
+                        # If login fails, show the error
+
+                        try:
+                            error_data = response.json()
+                            if isinstance(error_data, dict):
+                                if "detail" in error_data:
+                                    error_message = error_data.get("detail")
+                                elif "message" in error_data:
+                                    error_message = error_data.get("message")
+                                else:
+                                    msgs = []
+                                    for k, v in error_data.items():
+                                        val = v[0] if isinstance(v, list) else v
+                                        msgs.append(f"{k.capitalize()}: {val}")
+                                    error_message = " | ".join(msgs) if msgs else str(error_data)
+                            else:
+                                error_message = str(error_data)
+                        except ValueError:
+
+                            error_message = response.text or "Unable to log in."
+
+                        st.error(f"Login failed: {error_message}")
+
                         return
 
                     # If we reach here, status code is 200
@@ -157,7 +499,7 @@ def show_login_page() -> None:
                         st.session_state.user_id = data.get("user_id") or data.get("id")
                         st.session_state.is_tpo = bool(data.get("is_tpo", False))
 
-                    st.success("Login successful!")
+                    st.toast("Login successful!", icon="🔓")
 
                     st.rerun()
 
@@ -170,6 +512,7 @@ def show_login_page() -> None:
     with register_tab:
 
         st.subheader("Register as a New Student")
+        st.caption("New registrations are students by default. For Faculty/TPO access, contact the developer.")
 
         with st.form("register_form", clear_on_submit=True):
 
@@ -231,16 +574,36 @@ def show_login_page() -> None:
 
                             created_email = response_data.get("email", reg_email)
 
-                            st.success(f"Registration successful! You can now log in.")
+                            st.toast(f"Registration successful! You can now log in.", icon="🎉")
 
                             st.info(f"Registered with Username: **{created_username}** | Email: **{created_email}**")
 
                         except ValueError:
 
-                            st.success("Registration successful! You can now log in.")
+                            st.toast("Registration successful! You can now log in.", icon="🎉")
 
                     else:
-                        display_http_error("Registration failed", response)
+
+                        try:
+                            error_data = response.json()
+                            if isinstance(error_data, dict):
+                                if "detail" in error_data:
+                                    error_message = error_data.get("detail")
+                                elif "message" in error_data:
+                                    error_message = error_data.get("message")
+                                else:
+                                    msgs = []
+                                    for k, v in error_data.items():
+                                        val = v[0] if isinstance(v, list) else v
+                                        msgs.append(f"{k.capitalize()}: {val}")
+                                    error_message = " | ".join(msgs) if msgs else str(error_data)
+                            else:
+                                error_message = str(error_data)
+                        except ValueError:
+
+                            error_message = response.text or "Unable to register."
+
+                        st.error(f"Registration failed: {error_message}")
 
                 except requests.RequestException as exc:
 
@@ -272,7 +635,7 @@ def show_profile_page() -> None:
             profile_data = response.json()
             profile_id = profile_data.get("id")
         else:
-            display_http_error("Failed to fetch profile", response)
+            st.error(f"Failed to fetch profile: {response.status_code}")
             profile_data = {}
             profile_id = None
     except requests.RequestException as e:
@@ -284,48 +647,199 @@ def show_profile_page() -> None:
         st.error("Profile not found. Please try logging in again.")
         return
 
-    st.subheader("My Profile")
+    st.markdown("""
+        <div style='background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.1)); 
+                    padding: 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 24px;'>
+            <h2 style='margin:0; font-family: "Outfit", sans-serif; color: #f8fafc;'>👤 Complete Your Profile for AI Matching</h2>
+            <p style='margin: 8px 0 0 0; color: #e2e8f0; font-size: 1.05rem; line-height: 1.5;'>
+                Welcome to your AcroConnect hub! 🚀 Keeping your profile updated is critical. 
+                Our underlying <strong>Gemini AI Engine</strong> uses this exact data—your CGPA, skills, and career goals—to 
+                generate highly accurate, dynamic learning roadmaps and match you with the best job opportunities from your TPO.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
 
-    # Profile Update Form
-    with st.form("profile_form", clear_on_submit=False):
-        name = st.text_input("Full Name", value=profile_data.get("full_name", ""))
-        phone = st.text_input("Phone", value=profile_data.get("phone", ""))
+    # --- Autosave helpers ---
+    def _normalize_text(v):
+        return (v or "").strip()
 
-        cgpa_value = profile_data.get("cgpa")
-        if cgpa_value is None:
-            cgpa_value = 0.0
-        else:
-            try:
-                cgpa_value = float(cgpa_value)
-            except (ValueError, TypeError):
-                cgpa_value = 0.0
+    def _normalize_url(v):
+        value = _normalize_text(v)
+        if not value:
+            return ""
+        if value.startswith("http://") or value.startswith("https://"):
+            return value
+        # Accept user-entered domains/usernames by defaulting to https scheme.
+        return f"https://{value}"
 
-        cgpa = st.number_input("CGPA", min_value=0.0, max_value=10.0, value=cgpa_value, step=0.01)
-        career_goal = st.text_area("Career Goal", value=profile_data.get("career_goal", ""))
-        st.caption("💡 Describe your career aspirations (this helps generate better AI roadmaps)")
-        update_button = st.form_submit_button("Update Profile")
-
-    if update_button:
-        update_payload = {
-            "full_name": name,
-            "phone": phone,
-            "cgpa": cgpa,
-            "career_goal": career_goal,
+    def _snapshot_from_widgets():
+        return {
+            "full_name": _normalize_text(st.session_state.get("profile_full_name")),
+            "phone": _normalize_text(st.session_state.get("profile_phone")),
+            "cgpa": float(st.session_state.get("profile_cgpa") or 0.0),
+            "semester": int(st.session_state.get("profile_semester") or 1),
+            "section": _normalize_text(st.session_state.get("profile_section")),
+            "tech_stack": _normalize_text(st.session_state.get("profile_tech_stack")),
+            "resume_url": _normalize_url(st.session_state.get("profile_resume_url")),
+            "github_url": _normalize_url(st.session_state.get("profile_github_url")),
+            "linkedin_url": _normalize_url(st.session_state.get("profile_linkedin_url")),
+            "portfolio_url": _normalize_url(st.session_state.get("profile_portfolio_url")),
+            "career_goal": _normalize_text(st.session_state.get("profile_career_goal")),
+            "achievements": _normalize_text(st.session_state.get("profile_achievements")),
+            "projects": _normalize_text(st.session_state.get("profile_projects")),
         }
+
+    def _snapshot_from_server(d):
+        def _num(x, default=0.0):
+            try:
+                return float(x)
+            except (TypeError, ValueError):
+                return default
+
+        def _int(x, default=1):
+            try:
+                return int(x)
+            except (TypeError, ValueError):
+                return default
+
+        return {
+            "full_name": _normalize_text(d.get("full_name")),
+            "phone": _normalize_text(d.get("phone")),
+            "cgpa": _num(d.get("cgpa"), 0.0),
+            "semester": _int(d.get("semester"), 1),
+            "section": _normalize_text(d.get("section")),
+            "tech_stack": _normalize_text(d.get("tech_stack")),
+            "resume_url": _normalize_text(d.get("resume_url")),
+            "github_url": _normalize_text(d.get("github_url")),
+            "linkedin_url": _normalize_text(d.get("linkedin_url")),
+            "portfolio_url": _normalize_text(d.get("portfolio_url")),
+            "career_goal": _normalize_text(d.get("career_goal")),
+            "achievements": _normalize_text(d.get("achievements")),
+            "projects": _normalize_text(d.get("projects")),
+        }
+
+    def _diff_payload(current, last_saved):
+        payload = {}
+        for k, v in current.items():
+            if last_saved.get(k) != v:
+                payload[k] = v
+        return payload
+
+    # Initialize autosave session state once per profile id
+    autosave_key = f"profile_autosave_init_{profile_id}"
+    last_saved_key = f"profile_last_saved_{profile_id}"
+    last_save_ts_key = f"profile_last_save_ts_{profile_id}"
+    server_snapshot = _snapshot_from_server(profile_data)
+    if not st.session_state.get(autosave_key):
+        st.session_state[last_saved_key] = server_snapshot
+        st.session_state[last_save_ts_key] = 0.0
+        st.session_state[autosave_key] = True
+
+    # Always ensure widgets are rehydrated when returning from another page.
+    # Streamlit can drop widget-bound keys if a widget is not rendered in a run.
+    field_keys = [
+        ("profile_full_name", "full_name"),
+        ("profile_phone", "phone"),
+        ("profile_cgpa", "cgpa"),
+        ("profile_semester", "semester"),
+        ("profile_section", "section"),
+        ("profile_tech_stack", "tech_stack"),
+        ("profile_resume_url", "resume_url"),
+        ("profile_github_url", "github_url"),
+        ("profile_linkedin_url", "linkedin_url"),
+        ("profile_portfolio_url", "portfolio_url"),
+        ("profile_career_goal", "career_goal"),
+        ("profile_achievements", "achievements"),
+        ("profile_projects", "projects"),
+    ]
+    source_snapshot = st.session_state.get(last_saved_key) or server_snapshot
+    for widget_key, data_key in field_keys:
+        if widget_key not in st.session_state:
+            st.session_state[widget_key] = source_snapshot.get(data_key, "")
+
+    colA, colB = st.columns([3, 2])
+    with colB:
+        autosave_enabled = st.toggle("Autosave", value=True, help="Automatically saves changes as you edit.")
+        st.caption("Autosave keeps your data retained even if you refresh.")
+
+    with colA:
+        st.write("")
+
+    with st.container(border=True):
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            st.text_input("Full Name", key="profile_full_name")
+            st.text_input("Phone", key="profile_phone")
+            st.number_input("CGPA", min_value=0.0, max_value=10.0, step=0.01, key="profile_cgpa")
+        with c2:
+            st.number_input("Semester", min_value=1, max_value=10, step=1, key="profile_semester")
+            st.text_input("Class/Section", key="profile_section", help="Example: CSE-A, IT-B, etc.")
+            st.text_input("Tech Stack (comma-separated)", key="profile_tech_stack", help="Example: Python, Django, React")
+        with c3:
+            st.text_input("Resume URL", key="profile_resume_url")
+            st.text_input("GitHub URL", key="profile_github_url")
+            st.text_input("LinkedIn URL", key="profile_linkedin_url")
+            st.text_input("Portfolio URL", key="profile_portfolio_url")
+
+    st.write("")
+    st.text_area("Career Goal", key="profile_career_goal")
+    st.caption("Describe your career aspirations (this helps generate better AI roadmaps).")
+    st.text_area("Achievements", key="profile_achievements", help="Awards, certifications, hackathons, etc.")
+    st.text_area("Projects (one per line)", key="profile_projects")
+
+    current_snapshot = _snapshot_from_widgets()
+    last_saved_snapshot = st.session_state.get(last_saved_key, {})
+    payload = _diff_payload(current_snapshot, last_saved_snapshot)
+
+    save_col1, save_col2, save_col3 = st.columns([1, 1, 2])
+    with save_col1:
+        save_now = st.button("Save now", type="primary", disabled=not bool(payload), use_container_width=True)
+    with save_col2:
+        discard = st.button("Discard changes", disabled=not bool(payload), use_container_width=True)
+    with save_col3:
+        if payload:
+            st.warning("Unsaved changes", icon="⚠️")
+        else:
+            st.success("All changes saved", icon="✅")
+
+    if discard:
+        # reset widgets to last saved values
+        for k, v in last_saved_snapshot.items():
+            st.session_state[f"profile_{k}"] = v
+        st.rerun()
+
+    should_autosave = autosave_enabled and bool(payload)
+    throttled = (time.time() - float(st.session_state.get(last_save_ts_key, 0.0))) < 1.2
+
+    if (save_now or (should_autosave and not throttled)) and payload:
         try:
             update_response = requests.patch(
                 f"{API_URL}/api/v1/student-profiles/{profile_id}/",
-                json=update_payload,
+                json=payload,
                 headers=headers,
                 timeout=10,
             )
             if update_response.status_code in (200, 204):
-                st.success("Profile updated successfully!")
-                st.rerun()
+                # Update last saved snapshot locally
+                merged = dict(last_saved_snapshot)
+                merged.update(payload)
+                st.session_state[last_saved_key] = merged
+                st.session_state[last_save_ts_key] = time.time()
+                if save_now:
+                    st.toast("Saved")
             else:
-                display_http_error("Update failed", update_response)
+                try:
+                    error_data = update_response.json()
+                    error_message = (
+                        error_data.get("detail")
+                        or error_data.get("message")
+                        or str(error_data)
+                    )
+                except ValueError:
+                    error_message = update_response.text or "Unable to update profile."
+                st.error(f"Save failed: {error_message}")
         except requests.RequestException as e:
-            st.error(f"Error updating profile: {e}")
+            st.error(f"Save failed: {e}")
 
     # Display existing skills
     st.write("### Your Skills")
@@ -347,10 +861,10 @@ def show_profile_page() -> None:
                             timeout=10,
                         )
                         if delete_response.status_code in (200, 204):
-                            st.success(f"Removed {skill_name}")
+                            st.toast(f"Removed {skill_name}", icon="🗑️")
                             st.rerun()
                         else:
-                            display_http_error("Failed to remove skill", delete_response)
+                            st.error("Failed to remove skill.")
                     except requests.RequestException as e:
                         st.error(f"Error removing skill: {e}")
             st.progress(skill_level / 5.0 if skill_level <= 5 else 1.0)
@@ -393,16 +907,25 @@ def show_profile_page() -> None:
                             timeout=10,
                         )
                         if add_response.status_code in (200, 201):
-                            st.success("Skill added successfully!")
+                            st.toast("Skill added successfully!", icon="⭐")
                             st.rerun()
                         else:
-                            display_http_error("Failed to add skill", add_response)
+                            try:
+                                error_data = add_response.json()
+                                error_message = (
+                                    error_data.get("detail")
+                                    or error_data.get("message")
+                                    or str(error_data)
+                                )
+                            except ValueError:
+                                error_message = add_response.text or "Unable to add skill."
+                            st.error(f"Failed to add skill: {error_message}")
                     except requests.RequestException as e:
                         st.error(f"Error adding skill: {e}")
             else:
                 st.info("All available skills have been added to your profile.")
         else:
-            display_http_error("Failed to fetch skills", skills_response)
+            st.error(f"Failed to fetch skills: {skills_response.status_code}")
     except requests.RequestException as e:
         st.error(f"Error fetching skills: {e}")
 
@@ -431,14 +954,22 @@ def show_roadmap_page() -> None:
                 r for r in all_roadmaps
                 if r.get("profile", {}).get("user", {}).get("id") == user_id
             ]
+        elif handle_auth_failure(response):
+            return
         else:
-            display_http_error("Failed to fetch roadmaps", response)
+            st.error(f"Failed to fetch roadmaps: {response.status_code}")
             user_roadmaps = []
     except requests.RequestException as e:
         st.error(f"Error fetching roadmaps: {e}")
         user_roadmaps = []
 
-    st.subheader("AI Roadmap")
+    st.markdown("""
+        <div style='background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1)); 
+                    padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 24px;'>
+            <h2 style='margin:0; font-family: "Outfit", sans-serif; color: #f8fafc;'>🚀 AI Learning Roadmap</h2>
+            <p style='margin: 4px 0 0 0; color: #94a3b8; font-size: 0.95rem;'>Generate and track your personalized career path using Gemini AI.</p>
+        </div>
+    """, unsafe_allow_html=True)
 
     # Display existing roadmaps
     if user_roadmaps:
@@ -446,8 +977,43 @@ def show_roadmap_page() -> None:
         for roadmap in user_roadmaps:
             generated_on = roadmap.get("generated_on", "")
             roadmap_text = roadmap.get("roadmap_text", "")
-            with st.expander(f"Roadmap generated on {generated_on[:10] if generated_on else 'Unknown date'}"):
+            roadmap_id = roadmap.get("id")
+
+            generated_label = "Unknown time"
+            if generated_on:
+                try:
+                    dt = datetime.fromisoformat(generated_on.replace("Z", "+00:00"))
+                    generated_label = dt.strftime("%d %b %Y, %I:%M:%S %p")
+                except ValueError:
+                    generated_label = generated_on
+
+            with st.expander(f"Roadmap generated on {generated_label}"):
                 st.markdown(roadmap_text)
+                if st.button("Delete this roadmap", key=f"delete_roadmap_{roadmap_id}", type="secondary"):
+                    try:
+                        delete_response = requests.delete(
+                            f"{API_URL}/api/v1/roadmaps/{roadmap_id}/",
+                            headers=headers,
+                            timeout=10,
+                        )
+                        if delete_response.status_code in (200, 204):
+                            st.toast("Roadmap deleted successfully.", icon="🗑️")
+                            st.rerun()
+                        elif handle_auth_failure(delete_response):
+                            return
+                        else:
+                            try:
+                                error_data = delete_response.json()
+                                error_message = (
+                                    error_data.get("detail")
+                                    or error_data.get("message")
+                                    or str(error_data)
+                                )
+                            except ValueError:
+                                error_message = delete_response.text or "Unable to delete roadmap."
+                            st.error(f"Delete failed: {error_message}")
+                    except requests.RequestException as e:
+                        st.error(f"Error deleting roadmap: {e}")
     else:
         st.info("No roadmaps generated yet. Click the button below to generate your first AI roadmap!")
 
@@ -467,8 +1033,19 @@ def show_roadmap_page() -> None:
                     new_roadmap = generate_response.json()
                     st.success("✅ Roadmap generated successfully!")
                     st.rerun()
+                elif handle_auth_failure(generate_response):
+                    return
                 else:
-                    display_http_error("Failed to generate roadmap", generate_response)
+                    try:
+                        error_data = generate_response.json()
+                        error_message = (
+                            error_data.get("detail")
+                            or error_data.get("message")
+                            or str(error_data)
+                        )
+                    except ValueError:
+                        error_message = generate_response.text or "Unable to generate roadmap."
+                    st.error(f"❌ Failed to generate roadmap: {error_message}")
             except requests.RequestException as e:
                 st.error(f"❌ Error generating roadmap: {e}")
 
@@ -483,7 +1060,15 @@ def show_job_board_page() -> None:
 
     headers = {"Authorization": f"Bearer {token}"}
 
-    st.subheader("Job Board")
+    st.markdown("""
+        <div style='background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.1)); 
+                    padding: 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 24px;'>
+            <h2 style='margin:0; font-family: "Outfit", sans-serif; color: #f8fafc;'>💼 Exclusive Campus Opportunities</h2>
+            <p style='margin: 8px 0 0 0; color: #e2e8f0; font-size: 1.05rem; line-height: 1.5;'>
+                Discover top-tier roles curated specifically for you by the Training and Placement Office. Ensure your profile and AI Roadmap are up to date before applying to stand out to recruiters! ✨
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
 
     try:
         response = requests.get(
@@ -529,7 +1114,7 @@ def show_job_board_page() -> None:
             else:
                 st.info("No job postings available at the moment. Check back later!")
         else:
-            display_http_error("Failed to fetch job postings", response)
+            st.error(f"Failed to fetch job postings: {response.status_code}")
     except requests.RequestException as e:
         st.error(f"Error fetching job postings: {e}")
 
@@ -544,7 +1129,15 @@ def show_tpo_dashboard_page() -> None:
 
     headers = {"Authorization": f"Bearer {token}"}
 
-    st.subheader("TPO Dashboard")
+    st.markdown("""
+        <div style='background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.1)); 
+                    padding: 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);'>
+            <h2 style='margin:0; font-family: "Outfit", sans-serif; color: #f8fafc;'>📊 Advanced TPO Analytics Engine</h2>
+            <p style='margin: 8px 0 0 0; color: #e2e8f0; font-size: 1.05rem; line-height: 1.5;'>
+                Welcome to the central command center for student success. 🎯 Use these real-time analytics to track student readiness, filter by specific tech stacks, and make data-driven decisions to drastically increase campus placement rates.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
 
     # Fetch all student profiles
     try:
@@ -556,7 +1149,7 @@ def show_tpo_dashboard_page() -> None:
         if response.status_code == 200:
             profiles = response.json()
         else:
-            display_http_error("Failed to fetch student profiles", response)
+            st.error(f"Failed to fetch student profiles: {response.status_code}")
             profiles = []
     except requests.RequestException as e:
         st.error(f"Error fetching student profiles: {e}")
@@ -566,102 +1159,228 @@ def show_tpo_dashboard_page() -> None:
         st.info("No student profiles found.")
         return
 
-    # Prepare data for analytics
-    all_skills = []
-    skill_counts = {}
-    total_skills = 0
+    # Normalize student profiles into a DataFrame for filtering/analytics
+    rows = []
+    for p in profiles:
+        user = p.get("user") or {}
+        skills_assignments = p.get("skill_assignments") or []
+        skills_list = [
+            (a.get("skill") or {}).get("skill_name", "").strip()
+            for a in skills_assignments
+            if a.get("skill")
+        ]
+        tech_stack_raw = (p.get("tech_stack") or "").strip()
+        tech_stack_tokens = [t.strip() for t in tech_stack_raw.split(",") if t.strip()]
 
-    for profile in profiles:
-        skill_assignments = profile.get("skill_assignments", [])
-        for assignment in skill_assignments:
-            skill = assignment.get("skill", {})
-            skill_name = skill.get("skill_name", "")
-            if skill_name:
-                all_skills.append(skill_name)
-                skill_counts[skill_name] = skill_counts.get(skill_name, 0) + 1
-                total_skills += 1
+        rows.append(
+            {
+                "profile_id": p.get("id"),
+                "user_id": (user.get("id") if isinstance(user, dict) else None),
+                "name": p.get("full_name") or "",
+                "email": user.get("email") or "",
+                "phone": p.get("phone") or "",
+                "cgpa": float(p.get("cgpa") or 0.0),
+                "semester": int(p.get("semester") or 1),
+                "section": p.get("section") or "",
+                "tech_stack_raw": tech_stack_raw,
+                "tech_stack": ", ".join(tech_stack_tokens) if tech_stack_tokens else "",
+                "resume_url": p.get("resume_url") or "",
+                "github_url": p.get("github_url") or "",
+                "linkedin_url": p.get("linkedin_url") or "",
+                "portfolio_url": p.get("portfolio_url") or "",
+                "career_goal": p.get("career_goal") or "",
+                "achievements": p.get("achievements") or "",
+                "projects": p.get("projects") or "",
+                "skill_count": len([s for s in skills_list if s]),
+                "skills": ", ".join([s for s in skills_list if s]),
+                "updated_at": p.get("updated_at") or "",
+                "_tech_stack_tokens": tech_stack_tokens,
+                "_skills_list": [s for s in skills_list if s],
+            }
+        )
 
-    # Analytics Charts
+    df = pd.DataFrame(rows)
+
+    # --- Filters / grouping ---
+    st.write("### Filters & Groups")
+    f1, f2, f3, f4 = st.columns(4)
+    with f1:
+        semesters = sorted([int(x) for x in df["semester"].dropna().unique().tolist()])
+        selected_semesters = st.multiselect("Semester", options=semesters, default=semesters)
+    with f2:
+        sections = sorted([s for s in df["section"].dropna().unique().tolist() if str(s).strip()])
+        selected_sections = st.multiselect("Class/Section", options=sections, default=sections)
+    with f3:
+        min_cgpa = float(df["cgpa"].min()) if not df.empty else 0.0
+        max_cgpa = float(df["cgpa"].max()) if not df.empty else 10.0
+        cgpa_range = st.slider("CGPA range", min_value=0.0, max_value=10.0, value=(min_cgpa, max_cgpa), step=0.1)
+    with f4:
+        tech_query = st.text_input("Tech stack contains", placeholder="e.g. Django / React / Java")
+
+    # Optional skill filter
+    all_skills = sorted({s for sub in df["_skills_list"].tolist() for s in (sub or [])})
+    selected_skill = st.selectbox("Must have skill (optional)", options=["(Any)"] + all_skills, index=0)
+
+    filtered = df.copy()
+    if selected_semesters:
+        filtered = filtered[filtered["semester"].isin(selected_semesters)]
+    if selected_sections:
+        filtered = filtered[filtered["section"].isin(selected_sections)]
+    filtered = filtered[(filtered["cgpa"] >= cgpa_range[0]) & (filtered["cgpa"] <= cgpa_range[1])]
+    if tech_query.strip():
+        tq = tech_query.strip().lower()
+        filtered = filtered[filtered["tech_stack_raw"].fillna("").str.lower().str.contains(tq)]
+    if selected_skill != "(Any)":
+        filtered = filtered[filtered["_skills_list"].apply(lambda xs: selected_skill in (xs or []))]
+
+    k1, k2, k3, k4 = st.columns(4)
+    k1.metric("Students (filtered)", int(filtered.shape[0]))
+    k2.metric("Avg CGPA", f"{(filtered['cgpa'].mean() if not filtered.empty else 0.0):.2f}")
+    k3.metric("Avg skills / student", f"{(filtered['skill_count'].mean() if not filtered.empty else 0.0):.2f}")
+    k4.metric("Unique tech stacks", int(filtered["tech_stack"].nunique()))
+
+    # --- Analytics ---
     st.write("### Analytics")
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.write("**Skill Distribution**")
-        if skill_counts:
-            skill_df = pd.DataFrame(
-                list(skill_counts.items()),
-                columns=["Skill", "Count"]
-            ).sort_values("Count", ascending=False)
-            st.bar_chart(skill_df.set_index("Skill"))
+    a1, a2 = st.columns(2)
+    with a1:
+        st.write("**Students by Semester**")
+        if not filtered.empty:
+            sem_counts = filtered.groupby("semester")["profile_id"].count().sort_index()
+            st.bar_chart(sem_counts)
         else:
-            st.info("No skills data available.")
+            st.info("No data for selected filters.")
 
-    with col2:
-        st.write("**Average Skills per Student**")
-        if profiles:
-            avg_skills = total_skills / len(profiles) if len(profiles) > 0 else 0
-            st.metric("Average Skills", f"{avg_skills:.2f}")
-            st.metric("Total Students", len(profiles))
+        st.write("**Students by Section**")
+        if not filtered.empty:
+            sec_counts = filtered.groupby("section")["profile_id"].count().sort_values(ascending=False).head(12)
+            if sec_counts.empty:
+                st.info("No section data available.")
+            else:
+                st.bar_chart(sec_counts)
+
+    with a2:
+        st.write("**CGPA Distribution (Filtered)**")
+        if not filtered.empty:
+            st.bar_chart(filtered["cgpa"].round(1).value_counts().sort_index())
         else:
-            st.info("No student data available.")
+            st.info("No data for selected filters.")
+
+        st.write("**Top Skills (Filtered)**")
+        if not filtered.empty:
+            skill_counts = {}
+            for xs in filtered["_skills_list"].tolist():
+                for s in xs or []:
+                    skill_counts[s] = skill_counts.get(s, 0) + 1
+            if skill_counts:
+                skill_df = (
+                    pd.DataFrame(list(skill_counts.items()), columns=["Skill", "Count"])
+                    .sort_values("Count", ascending=False)
+                    .head(20)
+                )
+                st.bar_chart(skill_df.set_index("Skill"))
+            else:
+                st.info("No skills data available.")
+
+    st.write("**Top Tech Stack Keywords (Filtered)**")
+    if not filtered.empty:
+        tech_counts = {}
+        for tokens in filtered["_tech_stack_tokens"].tolist():
+            for t in tokens or []:
+                key = t.strip()
+                if key:
+                    tech_counts[key] = tech_counts.get(key, 0) + 1
+        if tech_counts:
+            tech_df = (
+                pd.DataFrame(list(tech_counts.items()), columns=["Tech", "Count"])
+                .sort_values("Count", ascending=False)
+                .head(20)
+            )
+            st.bar_chart(tech_df.set_index("Tech"))
+        else:
+            st.info("No tech stack data available.")
 
     # Student Data Table
-    st.write("### All Students")
-    
-    # Prepare DataFrame
-    student_data = []
-    for profile in profiles:
-        user = profile.get("user", {})
-        skill_assignments = profile.get("skill_assignments", [])
-        skills_list = [
-            assignment.get("skill", {}).get("skill_name", "")
-            for assignment in skill_assignments
-            if assignment.get("skill")
+    st.write("### Student Directory")
+    if not filtered.empty:
+        display_cols = [
+            "profile_id",
+            "user_id",
+            "name",
+            "email",
+            "phone",
+            "semester",
+            "section",
+            "cgpa",
+            "tech_stack",
+            "skill_count",
+            "skills",
+            "achievements",
+            "projects",
+            "updated_at",
         ]
-        
-        student_data.append({
-            "ID": profile.get("id"),
-            "User ID": user.get("id"),
-            "Full Name": profile.get("full_name", ""),
-            "Email": user.get("email", ""),
-            "Phone": profile.get("phone", ""),
-            "CGPA": profile.get("cgpa", 0.0),
-            "Skills": ", ".join(skills_list) if skills_list else "None",
-            "Skill Count": len(skills_list),
-        })
+        st.dataframe(filtered[display_cols], use_container_width=True, hide_index=True)
 
-    if student_data:
-        df = pd.DataFrame(student_data)
-        st.dataframe(df, use_container_width=True)
+        with st.expander("Quick view (selected student)", expanded=False):
+            picked = st.selectbox(
+                "Select student",
+                options=filtered["profile_id"].tolist(),
+                format_func=lambda pid: f"{int(pid)} - {filtered.loc[filtered['profile_id']==pid,'name'].values[0]}",
+            )
+            row = filtered.loc[filtered["profile_id"] == picked].iloc[0].to_dict()
+            cL, cR = st.columns(2)
+            with cL:
+                st.write(f"**Name:** {row.get('name','')}")
+                st.write(f"**Email:** {row.get('email','')}")
+                st.write(f"**Semester/Section:** {row.get('semester','')} / {row.get('section','')}")
+                st.write(f"**CGPA:** {row.get('cgpa','')}")
+                st.write(f"**Tech Stack:** {row.get('tech_stack','') or '—'}")
+                st.write(f"**Skills:** {row.get('skills','') or '—'}")
+            with cR:
+                if row.get("resume_url"):
+                    st.link_button("Resume", row["resume_url"])
+                if row.get("github_url"):
+                    st.link_button("GitHub", row["github_url"])
+                if row.get("linkedin_url"):
+                    st.link_button("LinkedIn", row["linkedin_url"])
+                if row.get("portfolio_url"):
+                    st.link_button("Portfolio", row["portfolio_url"])
+                st.write("**Achievements**")
+                st.write(row.get("achievements") or "—")
+                st.write("**Projects**")
+                st.write(row.get("projects") or "—")
 
         # Delete Student Function
         st.write("### Delete Student")
         with st.form("delete_student_form", clear_on_submit=True):
-            profile_id_to_delete = st.number_input(
-                "Enter Student Profile ID to delete",
+            user_id_to_delete = st.number_input(
+                "Enter User ID to delete",
                 min_value=1,
                 step=1,
                 key="delete_user_id"
             )
-            confirm_delete = st.checkbox("I understand this action is permanent.", value=False)
             delete_submit = st.form_submit_button("Delete Student", type="primary")
 
             if delete_submit:
-                if not confirm_delete:
-                    st.warning("Please confirm deletion before continuing.")
-                    return
                 try:
                     delete_response = requests.delete(
-                        f"{API_URL}/api/v1/student-profiles/{profile_id_to_delete}/",
+                        f"{API_URL}/api/v1/student-profiles/{user_id_to_delete}/",
                         headers=headers,
                         timeout=10,
                     )
                     if delete_response.status_code in (200, 204):
-                        st.success(f"Student profile {profile_id_to_delete} deleted successfully!")
+                        st.toast(f"Student with User ID {user_id_to_delete} deleted successfully!", icon="🗑️")
                         st.rerun()
                     else:
-                        display_http_error("Delete failed", delete_response)
+                        try:
+                            error_data = delete_response.json()
+                            error_message = (
+                                error_data.get("detail")
+                                or error_data.get("message")
+                                or str(error_data)
+                            )
+                        except ValueError:
+                            error_message = delete_response.text or "Unable to delete student."
+                        st.error(f"Delete failed: {error_message}")
                 except requests.RequestException as e:
                     st.error(f"Error deleting student: {e}")
 
@@ -676,7 +1395,13 @@ def show_job_management_page() -> None:
 
     headers = {"Authorization": f"Bearer {token}"}
 
-    st.subheader("Job Management")
+    st.markdown("""
+        <div style='background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.1)); 
+                    padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 24px;'>
+            <h2 style='margin:0; font-family: "Outfit", sans-serif; color: #f8fafc;'>🏢 Job Management</h2>
+            <p style='margin: 4px 0 0 0; color: #94a3b8; font-size: 0.95rem;'>Create, manage, and delete job postings for students.</p>
+        </div>
+    """, unsafe_allow_html=True)
 
     # Form to post new job
     st.write("### Post a New Job")
@@ -703,10 +1428,19 @@ def show_job_management_page() -> None:
                         timeout=10,
                     )
                     if response.status_code in (200, 201):
-                        st.success("Job posted successfully!")
+                        st.toast("Job posted successfully!", icon="💼")
                         st.rerun()
                     else:
-                        display_http_error("Failed to post job", response)
+                        try:
+                            error_data = response.json()
+                            error_message = (
+                                error_data.get("detail")
+                                or error_data.get("message")
+                                or str(error_data)
+                            )
+                        except ValueError:
+                            error_message = response.text or "Unable to post job."
+                        st.error(f"Failed to post job: {error_message}")
                 except requests.RequestException as e:
                     st.error(f"Error posting job: {e}")
 
@@ -762,10 +1496,10 @@ def show_job_management_page() -> None:
                                         timeout=10,
                                     )
                                     if delete_response.status_code in (200, 204):
-                                        st.success(f"Job '{title}' deleted successfully!")
+                                        st.toast(f"Job '{title}' deleted successfully!", icon="🗑️")
                                         st.rerun()
                                     else:
-                                        display_http_error("Failed to delete job", delete_response)
+                                        st.error("Failed to delete job.")
                                 except requests.RequestException as e:
                                     st.error(f"Error deleting job: {e}")
                 else:
@@ -773,7 +1507,7 @@ def show_job_management_page() -> None:
             else:
                 st.info("No job postings available.")
         else:
-            display_http_error("Failed to fetch job postings", response)
+            st.error(f"Failed to fetch job postings: {response.status_code}")
     except requests.RequestException as e:
         st.error(f"Error fetching job postings: {e}")
 
@@ -782,7 +1516,6 @@ def show_job_management_page() -> None:
 def show_main_app() -> None:
 
     st.title(f"Welcome, {st.session_state.user_email or 'User'}")
-    show_api_connection_hint()
 
     if st.sidebar.button("Logout"):
 
@@ -837,8 +1570,24 @@ def main() -> None:
     init_session_state()
 
     if not st.session_state.logged_in:
+        st.sidebar.title("AcroConnect")
+        st.sidebar.caption("Single portal (UI) + Django API backend")
 
-        show_login_page()
+        public_page = st.sidebar.radio(
+            "Explore",
+            options=["Home", "Login / Register", "About"],
+            index=0 if st.session_state.public_page == "home" else (1 if st.session_state.public_page in ("login", "register") else 2),
+        )
+
+        if public_page == "Home":
+            st.session_state.public_page = "home"
+            show_public_landing()
+        elif public_page == "About":
+            st.session_state.public_page = "about"
+            show_about_page()
+        else:
+            st.session_state.public_page = "login"
+            show_login_page()
 
     else:
 

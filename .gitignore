@@ -10,15 +10,6 @@ PROJECT_ROLES.md
 # Secrets and env files
 .env
 *.env
-secrets.json
-
-# OS / editor
-.DS_Store
-Thumbs.db
-.idea/
-
-# Secrets
-*.env
 .env.local
 secrets.json
 
@@ -32,6 +23,16 @@ build/
 
 # PyCharm
 .idea/
+
 # Private / presentation files
 private/
 
+# Python / Django
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+backend/db.sqlite3
+db.sqlite3

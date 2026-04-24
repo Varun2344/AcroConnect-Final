@@ -1,10 +1,10 @@
-# Sample Render "Infrastructure as Code" config for two services: backend (web) and frontend (web)
-# You'll still need to connect this repo to your Render account and set env vars.
+# Unified Render "Infrastructure as Code" config for AcroConnect
+# This single web service runs both the Django API and Streamlit UI.
 services:
   - type: web
-    name: acroconnect-backend
+    name: acroconnect
     env: docker
-    dockerfilePath: backend/Dockerfile
+    dockerfilePath: Dockerfile
     plan: free
     region: singapore
     envVars:
@@ -13,13 +13,4 @@ services:
       - key: GEMINI_API_KEY
         scope: env
       - key: DJANGO_SECRET_KEY
-        scope: env
-  - type: web
-    name: acroconnect-frontend
-    env: docker
-    dockerfilePath: frontend/Dockerfile
-    plan: free
-    region: singapore
-    envVars:
-      - key: API_URL
         scope: env
