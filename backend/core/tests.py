@@ -159,9 +159,17 @@ class RoadmapEndpointTests(APITestCase):
             },
         )
 
-    def test_generate_roadmap_returns_503_when_gemini_not_configured(self):
+    def test_generate_roadmap_uses_fallback_when_gemini_not_configured(self):
         self.client.force_authenticate(user=self.user)
-        with patch("core.views.GEMINI_AVAILABLE", False):
+        with patch("core.views.get_configured_gemini_client", return_value=(None, "missing key")):
             response = self.client.post("/api/v1/generate-roadmap/", {}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Roadmap.objects.count(), 1)
+        self.assertIn("Fallback Mode", response.data["roadmap_text"])
+
+    def test_genai_models_endpoint_reports_unavailable_reason(self):
+        self.client.force_authenticate(user=self.user)
+        with patch("core.views.get_configured_gemini_client", return_value=(None, "missing key")):
+            response = self.client.get("/api/v1/genai-models/")
         self.assertEqual(response.status_code, status.HTTP_503_SERVICE_UNAVAILABLE)
-        self.assertEqual(Roadmap.objects.count(), 0)
+        self.assertIn("missing key", response.data["detail"])

@@ -41,6 +41,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
         phone = validated_data.pop("phone", None)
         cgpa = validated_data.pop("cgpa", 0.0)
         password = validated_data.pop("password")
+        # Normalize email (avoid case/space mismatches on login)
+        if "email" in validated_data and validated_data["email"]:
+            validated_data["email"] = str(validated_data["email"]).strip().lower()
         
         # Set is_active to True for new users
         validated_data["is_active"] = True
@@ -78,8 +81,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         """
         Override validate to support both username and email login.
         """
-        username_or_email = attrs.get('username')
-        password = attrs.get('password')
+        username_or_email = (attrs.get("username") or "").strip()
+        password = attrs.get("password") or ""
 
         if not username_or_email or not password:
             raise serializers.ValidationError(
@@ -87,12 +90,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 code='authorization'
             )
 
-        # Try to find user by username first, then by email
+        # Try to find user by username first, then by email (case-insensitive).
         try:
-            user = CustomUser.objects.get(username=username_or_email)
+            user = CustomUser.objects.get(username__iexact=username_or_email)
         except CustomUser.DoesNotExist:
             try:
-                user = CustomUser.objects.get(email=username_or_email)
+                user = CustomUser.objects.get(email__iexact=username_or_email.strip().lower())
             except CustomUser.DoesNotExist:
                 raise serializers.ValidationError(
                     'No active account found with the given credentials.',
@@ -200,9 +203,18 @@ class StudentProfileSerializer(serializers.ModelSerializer):
             "full_name",
             "phone",
             "cgpa",
+            "semester",
+            "section",
+            "tech_stack",
             "resume_url",
+            "github_url",
+            "linkedin_url",
+            "portfolio_url",
             "career_goal",
+            "achievements",
+            "projects",
             "skill_assignments",
+            "updated_at",
         ]
 
 

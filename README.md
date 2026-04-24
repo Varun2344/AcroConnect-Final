@@ -1,6 +1,11 @@
 # AcroConnect
 
-AcroConnect is a university placement & career guidance platform (Django backend + Streamlit frontend) built for the Major Project. It includes student profiles, job postings, and an AI-powered "Learning Roadmap" generator that uses Google Generative AI (Gemini).
+AcroConnect is a university placement & career guidance platform built for the Major Project.
+
+**Important (submission view): this project runs as ONE website.**
+- **User-facing website**: Streamlit portal (single login + role-based dashboards)
+- **Backend service**: Django REST API (data + authentication)
+- **Django admin** (`/admin`) is **developer-only** (used to create Faculty/TPO accounts and manage data), not a separate “dashboard website”.
 
 ## Quick Links
 - Backend: `backend/`
@@ -8,8 +13,19 @@ AcroConnect is a university placement & career guidance platform (Django backend
 - Docker Compose: `docker-compose.yml`
 
 ## Local development (recommended)
+### Easiest launch (recommended for demo/submission)
+
+From the repo root, run:
+
+```powershell
+.\RUN_LOCAL.ps1
+```
+
+Then open the **single website** at `http://127.0.0.1:8501`.
+
+### Docker Compose (optional)
 1. Create a Python virtualenv and install dependencies for both backend and frontend.
-2. Start services with Docker Compose (recommended):
+2. Start services with Docker Compose:
 
 ```bash
 # from repo root
@@ -18,7 +34,7 @@ docker-compose up --build
 ```
 
 - Backend will be available at `http://127.0.0.1:8000`
-- Frontend (Streamlit) will be available at `http://127.0.0.1:8501`
+- User-facing website (Streamlit portal) will be available at `http://127.0.0.1:8501`
 
 ## Deployment (Render + Postgres)
 1. Create two Render Services (Docker): backend and frontend.
@@ -34,7 +50,7 @@ Switch the Django `DATABASES` to a proper Postgres URL via `DATABASE_URL` enviro
 
 ## Project structure
 - `backend/` - Django project
-- `frontend/` - Streamlit frontend app
+- `frontend/` - Streamlit portal (single website UI)
 
 ## Team
 - Varun Purohit (0827CI221148)

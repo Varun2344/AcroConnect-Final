@@ -44,11 +44,24 @@ class StudentProfile(models.Model):
     full_name = models.CharField(max_length=255)
     phone = models.CharField(max_length=20)
     cgpa = models.FloatField()
+    semester = models.PositiveSmallIntegerField(default=1)
+    section = models.CharField(max_length=16, blank=True)
+    tech_stack = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Comma-separated stack, e.g. Python, Django, React",
+    )
     resume_url = models.URLField(blank=True)
+    github_url = models.URLField(blank=True)
+    linkedin_url = models.URLField(blank=True)
+    portfolio_url = models.URLField(blank=True)
     career_goal = models.TextField(blank=True, help_text="Student's career goal or aspiration")
+    achievements = models.TextField(blank=True, help_text="Awards, certifications, hackathons, etc.")
+    projects = models.TextField(blank=True, help_text="Projects (suggested: one per line)")
     skills = models.ManyToManyField(
         Skill, through="StudentSkillSet", related_name="student_profiles", blank=True
     )
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["full_name"]

@@ -1,5 +1,6 @@
 import os
 import logging
+import importlib
 
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
@@ -8,19 +9,6 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
-
-# Try to import and configure Gemini API (optional)
-try:
-    import google.generativeai as genai
-    api_key = os.getenv("GEMINI_API_KEY")
-    if api_key:
-        genai.configure(api_key=api_key)
-        GEMINI_AVAILABLE = True
-    else:
-        GEMINI_AVAILABLE = False
-except ImportError:
-    GEMINI_AVAILABLE = False
-    genai = None
 
 # module logger
 logger = logging.getLogger(__name__)
@@ -44,6 +32,108 @@ from .serializers import (
 )
 
 
+def build_fallback_roadmap(profile, skills_list, career_goal):
+    """
+    Deterministic fallback roadmap used when Gemini is unavailable.
+    """
+    skills_text = ", ".join(skills_list) if skills_list else "No skills added yet"
+    semester = getattr(profile, "semester", 1) or 1
+    tech_stack = (getattr(profile, "tech_stack", "") or "").strip() or "General software stack"
+    target_role = career_goal if career_goal and career_goal.strip() else "Placement-ready Software Engineer"
+
+    return f"""# Personalized Learning Roadmap (Fallback Mode)
+
+**Student:** {profile.full_name}  
+**Current Semester:** {semester}  
+**CGPA:** {profile.cgpa}  
+**Career Goal:** {target_role}  
+**Current Skills:** {skills_text}  
+**Preferred Tech Stack:** {tech_stack}
+
+## Phase 1 (Weeks 1-4): Foundation
+- Audit your profile, resume, and project portfolio.
+- Practice coding fundamentals and DSA daily.
+- Create a weekly schedule with revision checkpoints.
+
+## Phase 2 (Weeks 5-8): Core Development
+- Deepen one backend and one frontend stack.
+- Build a mini project and deploy it.
+- Strengthen interview theory: DBMS, OS, OOP, CN.
+
+## Phase 3 (Weeks 9-12): Portfolio & Achievements
+- Build one major project aligned to your target role.
+- Add measurable outcomes in project documentation.
+- Participate in hackathons/certifications and record achievements.
+
+## Phase 4 (Weeks 13-16): Placement Readiness
+- Prepare role-specific resume variants.
+- Take weekly mock interviews (technical + HR).
+- Track job applications and improve based on feedback.
+
+## Weekly Checklist
+- [ ] 10-15 coding questions
+- [ ] 1 project/module update
+- [ ] 1 mock interview
+- [ ] Resume + LinkedIn refresh
+
+_Generated in fallback mode because Gemini was unavailable or request failed in the current environment._
+"""
+
+
+def get_configured_gemini_client():
+    """
+    Resolve and configure Gemini client at request-time.
+    Returns: (client_module_or_none, reason_or_none)
+    """
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        return None, "GEMINI_API_KEY is missing."
+
+    try:
+        genai = importlib.import_module("google.generativeai")
+    except ImportError:
+        return None, "google-generativeai package is not installed."
+
+    try:
+        genai.configure(api_key=api_key)
+    except Exception as exc:
+        return None, f"Gemini client configuration failed: {exc}"
+
+    return genai, None
+
+
+def get_gemini_runtime_config():
+    """
+    Runtime tuning for Gemini calls to avoid long request hangs.
+    """
+    timeout_sec = int(os.getenv("GEMINI_REQUEST_TIMEOUT_SEC", "15"))
+    models_raw = os.getenv(
+        "GEMINI_MODELS",
+        "models/gemini-2.5-flash,models/gemini-flash-latest,models/gemini-2.0-flash,models/gemini-pro-latest",
+    )
+    raw_models = [m.strip() for m in models_raw.split(",") if m.strip()]
+    if not raw_models:
+        raw_models = ["models/gemini-2.5-flash"]
+
+    # Accept both "gemini-*" and "models/gemini-*" forms.
+    models_to_try = []
+    for name in raw_models:
+        if name.startswith("models/"):
+            models_to_try.append(name)
+            models_to_try.append(name.replace("models/", "", 1))
+        else:
+            models_to_try.append(name)
+            models_to_try.append(f"models/{name}")
+
+    # Preserve order while removing duplicates.
+    deduped = []
+    seen = set()
+    for m in models_to_try:
+        if m not in seen:
+            seen.add(m)
+            deduped.append(m)
+
+    return timeout_sec, deduped
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
@@ -218,47 +308,38 @@ class GenerateRoadmapView(APIView):
         # Fetch career goal from profile
         career_goal = profile.career_goal or "Not specified"
 
-        # Build detailed prompt for AI
-        prompt = f"""You are a career guidance AI assistant. Create a personalized learning roadmap for a student.
+        # Keep prompt concise to reduce model timeout risk in free-tier environments.
+        prompt = f"""Create a concise, practical student career roadmap in markdown.
 
-Student Information:
+Student profile:
 - Name: {profile.full_name}
 - CGPA: {profile.cgpa}
-- Career Goal: {career_goal}
-- Current Skills: {skills_text}
+- Career goal: {career_goal}
+- Skills: {skills_text}
 
-Please create a comprehensive, step-by-step learning roadmap that will help this student achieve their career goal. The roadmap should:
-1. Be specific and actionable
-2. Build upon their current skills
-3. Include milestones and checkpoints
-4. Suggest learning resources and next steps
-5. Be realistic and achievable
+Output format:
+1) 16-week plan split into 4 phases (weeks 1-4, 5-8, 9-12, 13-16)
+2) Weekly checklist (4 bullets)
+3) Interview preparation plan
+4) 5 immediate next actions
 
-Format the roadmap in a clear, structured way with sections and bullet points."""
+Keep it specific, action-oriented, and realistic."""
 
-        if not GEMINI_AVAILABLE:
-            return Response(
-                {"detail": "Gemini API is not available. Please install google-generativeai package and set GEMINI_API_KEY environment variable."},
-                status=status.HTTP_503_SERVICE_UNAVAILABLE,
-            )
+        genai, gemini_unavailable_reason = get_configured_gemini_client()
+        if genai is None:
+            logger.warning("Gemini unavailable, using fallback roadmap. Reason: %s", gemini_unavailable_reason)
+            roadmap_text = build_fallback_roadmap(profile, skills_list, career_goal)
+            roadmap = Roadmap.objects.create(profile=profile, roadmap_text=roadmap_text)
+            serializer = RoadmapSerializer(roadmap)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         try:
+            timeout_sec, models_to_try = get_gemini_runtime_config()
             # Try several likely models in order until one succeeds.
             # Some deployments do not expose every Gemini model name, so we attempt
             # a few candidates and fall back gracefully.
             # Prefer the models that are commonly available in modern Google GenAI
             # deployments (based on the output from list_models()).
-            models_to_try = [
-                "gemini-flash-latest",
-                "gemini-pro-latest",
-                "gemini-2.5-flash",
-                "gemini-2.5-pro",
-                "gemini-2.5-flash-lite",
-                "gemini-2.0-flash",
-                "gemini-2.0-flash-lite",
-                "gemini-1.5-flash",
-                "text-bison-001",
-            ]
 
             roadmap_text = None
             last_exception = None
@@ -267,7 +348,10 @@ Format the roadmap in a clear, structured way with sections and bullet points.""
             for candidate in models_to_try:
                 try:
                     model = genai.GenerativeModel(candidate)
-                    response = model.generate_content(prompt)
+                    response = model.generate_content(
+                        prompt,
+                        request_options={"timeout": timeout_sec, "retry": None},
+                    )
 
                     # Prefer .text if available
                     if hasattr(response, "text") and response.text:
@@ -286,26 +370,18 @@ Format the roadmap in a clear, structured way with sections and bullet points.""
                     continue
 
             if not roadmap_text:
-                # No model produced usable text
-                detail_msg = (
-                    "No usable model available. Tried models: "
-                    + ", ".join(models_to_try)
-                    + ", "
-                    + (f"last error: {str(last_exception)}" if last_exception else "no exception captured")
+                logger.warning(
+                    "GenerateRoadmap: model attempts failed, using fallback. Last error: %s",
+                    str(last_exception) if last_exception else "none",
                 )
-                return Response({"detail": detail_msg}, status=status.HTTP_502_BAD_GATEWAY)
+                roadmap_text = build_fallback_roadmap(profile, skills_list, career_goal)
             # Optionally annotate which model was used (for debugging) at the top
             # we do not prepend debug metadata to the saved roadmap text here;
             # model usage is logged via the logger for diagnostics.
 
-        except Exception as e:
-            import traceback
-            error_details = traceback.format_exc()
-            print(f"Gemini API Error: {error_details}")
-            return Response(
-                {"detail": f"Error generating roadmap: {str(e)}"},
-                status=status.HTTP_502_BAD_GATEWAY,
-            )
+        except Exception:
+            logger.exception("Gemini generation raised exception, using fallback.")
+            roadmap_text = build_fallback_roadmap(profile, skills_list, career_goal)
 
         # Save the roadmap
         roadmap = Roadmap.objects.create(profile=profile, roadmap_text=roadmap_text)
@@ -340,9 +416,10 @@ class ListGenaiModelsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        if not GEMINI_AVAILABLE:
+        genai, gemini_unavailable_reason = get_configured_gemini_client()
+        if genai is None:
             return Response(
-                {"detail": "Gemini API (google-generativeai) is not installed or not configured."},
+                {"detail": f"Gemini API unavailable: {gemini_unavailable_reason}"},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
 
