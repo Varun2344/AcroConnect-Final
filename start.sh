@@ -7,7 +7,11 @@ cd /app/backend
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 
-# 2. Start Django Gunicorn server in the background
+# 2. Automatically create default admin superuser (for Render free tier)
+echo "Ensuring default admin user exists..."
+python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); u = User.objects.filter(username='admin').first(); (u or User.objects.create_superuser('admin', 'admin@example.com', 'adminpassword123')); u = User.objects.get(username='admin'); u.is_tpo = True; u.save()"
+
+# 3. Start Django Gunicorn server in the background
 echo "Starting Django backend..."
 gunicorn acroconnect_backend.wsgi:application --bind 127.0.0.1:8000 --workers 3 --daemon
 
