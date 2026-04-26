@@ -2,6 +2,8 @@ import streamlit as st
 
 import pandas as pd
 import requests
+import re
+import plotly.express as px
 import os
 import time
 from datetime import datetime
@@ -534,8 +536,11 @@ def show_login_page() -> None:
 
             if not all([name, username, reg_email, phone, reg_password]):
 
-                st.error("All fields are required for registration.")
-
+                st.error("❌ All fields are required for registration.")
+            elif len(reg_password) < 8:
+                st.error("❌ Password must be at least 8 characters long.")
+            elif not re.match(r"[^@]+@[^@]+\.[^@]+", reg_email):
+                st.error("❌ Please enter a valid email address.")
             else:
 
                 payload = {
@@ -880,6 +885,22 @@ def show_profile_page() -> None:
             headers=headers,
             timeout=10,
         )
+        # Also fetch job postings to see which skills are in demand
+        job_demand = {}
+        try:
+            jobs_res = requests.get(f"{API_URL}/api/v1/job-postings/", headers=headers, timeout=10)
+            if jobs_res.status_code == 200:
+                for job in jobs_res.json():
+                    comp = job.get("company") or "Unknown Company"
+                    for req in job.get("required_skills", []):
+                        s_id = req.get("skill", {}).get("id")
+                        if s_id:
+                            if s_id not in job_demand:
+                                job_demand[s_id] = set()
+                            job_demand[s_id].add(comp)
+        except Exception:
+            pass
+
         if skills_response.status_code == 200:
             all_skills = skills_response.json()
             existing_skill_ids = [a.get("skill", {}).get("id") for a in skill_assignments if a.get("skill")]
@@ -887,7 +908,15 @@ def show_profile_page() -> None:
             
             if available_skills:
                 with st.form("add_skill_form", clear_on_submit=True):
-                    skill_options = {f"{s.get('skill_name')} ({s.get('category', 'N/A')})": s.get("id") for s in available_skills}
+                    skill_options = {}
+                    for s in available_skills:
+                        s_id = s.get("id")
+                        base_name = f"{s.get('skill_name')} ({s.get('category', 'N/A')})"
+                        if s_id in job_demand:
+                            comps = list(job_demand[s_id])
+                            base_name += f" 🔥 Required by {', '.join(comps[:2])}" + ("..." if len(comps)>2 else "")
+                        skill_options[base_name] = s_id
+                        
                     selected_skill = st.selectbox("Select Skill", options=list(skill_options.keys()))
                     skill_level = st.slider("Skill Level", min_value=1, max_value=5, value=3, step=1)
                     add_skill_button = st.form_submit_button("Add Skill")
@@ -1245,23 +1274,37 @@ def show_tpo_dashboard_page() -> None:
     with a1:
         st.write("**Students by Semester**")
         if not filtered.empty:
-            sem_counts = filtered.groupby("semester")["profile_id"].count().sort_index()
-            st.bar_chart(sem_counts)
+            sem_counts = filtered.groupby("semester")["profile_id"].count().reset_index()
+            sem_counts.columns = ["Semester", "Count"]
+            fig1 = px.bar(sem_counts, x="Semester", y="Count", color="Semester", color_continuous_scale="Viridis", text="Count", labels={"Count": "Number of Students"})
+            fig1.update_layout(showlegend=False, margin=dict(l=0, r=0, t=30, b=0))
+            fig1.update_xaxes(dtick=1)
+            fig1.update_yaxes(dtick=1)
+            st.plotly_chart(fig1, use_container_width=True)
         else:
             st.info("No data for selected filters.")
 
         st.write("**Students by Section**")
         if not filtered.empty:
-            sec_counts = filtered.groupby("section")["profile_id"].count().sort_values(ascending=False).head(12)
+            sec_counts = filtered.groupby("section")["profile_id"].count().sort_values(ascending=False).head(12).reset_index()
+            sec_counts.columns = ["Section", "Count"]
             if sec_counts.empty:
                 st.info("No section data available.")
             else:
-                st.bar_chart(sec_counts)
+                fig2 = px.pie(sec_counts, names="Section", values="Count", hole=0.4, color_discrete_sequence=px.colors.qualitative.Pastel)
+                fig2.update_layout(margin=dict(l=0, r=0, t=30, b=0))
+                st.plotly_chart(fig2, use_container_width=True)
 
     with a2:
         st.write("**CGPA Distribution (Filtered)**")
         if not filtered.empty:
-            st.bar_chart(filtered["cgpa"].round(1).value_counts().sort_index())
+            cgpa_counts = filtered["cgpa"].round(1).value_counts().sort_index().reset_index()
+            cgpa_counts.columns = ["CGPA", "Count"]
+            fig3 = px.bar(cgpa_counts, x="CGPA", y="Count", color="CGPA", color_continuous_scale="Plasma", labels={"Count": "Number of Students"})
+            fig3.update_layout(showlegend=False, margin=dict(l=0, r=0, t=30, b=0))
+            fig3.update_xaxes(range=[0, 10])
+            fig3.update_yaxes(dtick=1)
+            st.plotly_chart(fig3, use_container_width=True)
         else:
             st.info("No data for selected filters.")
 
@@ -1274,10 +1317,13 @@ def show_tpo_dashboard_page() -> None:
             if skill_counts:
                 skill_df = (
                     pd.DataFrame(list(skill_counts.items()), columns=["Skill", "Count"])
-                    .sort_values("Count", ascending=False)
-                    .head(20)
+                    .sort_values("Count", ascending=True)
+                    .tail(15)
                 )
-                st.bar_chart(skill_df.set_index("Skill"))
+                fig4 = px.bar(skill_df, x="Count", y="Skill", orientation='h', color="Count", color_continuous_scale="Tealgrn", text="Count", labels={"Count": "Number of Students"})
+                fig4.update_layout(showlegend=False, margin=dict(l=0, r=0, t=30, b=0))
+                fig4.update_xaxes(dtick=1)
+                st.plotly_chart(fig4, use_container_width=True)
             else:
                 st.info("No skills data available.")
 
@@ -1292,16 +1338,31 @@ def show_tpo_dashboard_page() -> None:
         if tech_counts:
             tech_df = (
                 pd.DataFrame(list(tech_counts.items()), columns=["Tech", "Count"])
-                .sort_values("Count", ascending=False)
-                .head(20)
+                .sort_values("Count", ascending=True)
+                .tail(15)
             )
-            st.bar_chart(tech_df.set_index("Tech"))
+            fig5 = px.bar(tech_df, x="Count", y="Tech", orientation='h', color="Count", color_continuous_scale="Sunset", text="Count", labels={"Count": "Number of Students", "Tech": "Technology"})
+            fig5.update_layout(showlegend=False, margin=dict(l=0, r=0, t=30, b=0))
+            fig5.update_xaxes(dtick=1)
+            st.plotly_chart(fig5, use_container_width=True)
         else:
             st.info("No tech stack data available.")
 
     # Student Data Table
     st.write("### Student Directory")
     if not filtered.empty:
+        
+        # CSV Export Functionality
+        csv_data = filtered.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="?? Download Analytics Data as CSV",
+            data=csv_data,
+            file_name=f"tpo_student_data_{datetime.now().strftime('%Y%m%d')}.csv",
+            mime="text/csv",
+            type="primary"
+        )
+        st.markdown("<br>", unsafe_allow_html=True)
+        
         display_cols = [
             "profile_id",
             "user_id",
@@ -1403,6 +1464,36 @@ def show_job_management_page() -> None:
         </div>
     """, unsafe_allow_html=True)
 
+    # Master Skill Database
+    st.write("### 🛠️ Master Skill Database")
+    with st.expander("Add New Skill to Global Database"):
+        st.write("If a specific skill is missing from the global list, add it here so students can select it and you can require it for jobs.")
+        with st.form("tpo_add_skill_form", clear_on_submit=True):
+            new_skill_name = st.text_input("Skill Name (e.g. FastAPI, MongoDB)")
+            new_skill_category = st.text_input("Category (e.g. Backend, Database) [Optional]")
+            if st.form_submit_button("Add to Database"):
+                if new_skill_name:
+                    try:
+                        res = requests.post(f"{API_URL}/api/v1/skills/", json={"skill_name": new_skill_name, "category": new_skill_category}, headers=headers, timeout=10)
+                        if res.status_code in (200, 201):
+                            st.toast(f"Skill '{new_skill_name}' added to global database!", icon="✅")
+                            st.rerun()
+                        else:
+                            st.error(f"Failed to add skill. It might already exist.")
+                    except Exception as e:
+                        st.error(f"Error: {e}")
+                else:
+                    st.error("Skill name is required.")
+
+    # Fetch all global skills once for job assignment
+    all_global_skills = []
+    try:
+        sk_res = requests.get(f"{API_URL}/api/v1/skills/", headers=headers, timeout=10)
+        if sk_res.status_code == 200:
+            all_global_skills = sk_res.json()
+    except:
+        pass
+
     # Form to post new job
     st.write("### Post a New Job")
     with st.form("post_job_form", clear_on_submit=True):
@@ -1480,12 +1571,54 @@ def show_job_management_page() -> None:
                             
                             if required_skills:
                                 st.write("**Required Skills:**")
-                                skill_names = [
-                                    skill.get("skill", {}).get("skill_name", "Unknown")
-                                    for skill in required_skills
-                                    if skill.get("skill")
-                                ]
-                                st.write(", ".join(skill_names) if skill_names else "None specified")
+                                for req_skill in required_skills:
+                                    s_info = req_skill.get("skill", {})
+                                    s_name = s_info.get("skill_name", "Unknown")
+                                    r_level = req_skill.get("required_level", 0)
+                                    req_id = req_skill.get("id")
+                                    col1, col2 = st.columns([3, 1])
+                                    with col1:
+                                        st.write(f"- {s_name} (Level {r_level}/5)")
+                                    with col2:
+                                        if st.button("Remove", key=f"del_req_{req_id}", help="Remove this requirement"):
+                                            try:
+                                                requests.delete(f"{API_URL}/api/v1/required-skills/{req_id}/", headers=headers, timeout=10)
+                                                st.rerun()
+                                            except:
+                                                pass
+                            else:
+                                st.write("**Required Skills:** None specified")
+                            
+                            st.write("---")
+                            # Form to add a new requirement to this job
+                            existing_req_ids = [rs.get("skill", {}).get("id") for rs in required_skills if rs.get("skill")]
+                            avail_skills = [s for s in all_global_skills if s.get("id") not in existing_req_ids]
+                            
+                            if avail_skills:
+                                with st.form(f"add_req_form_{job_id}", clear_on_submit=True):
+                                    st.write("**Add Required Skill**")
+                                    skill_opts = {f"{s.get('skill_name')}": s.get("id") for s in avail_skills}
+                                    sel_sk = st.selectbox("Select Skill", options=list(skill_opts.keys()), key=f"sel_{job_id}")
+                                    sel_lvl = st.slider("Required Level", 1, 5, 3, key=f"lvl_{job_id}")
+                                    if st.form_submit_button("Add Requirement"):
+                                        if sel_sk:
+                                            try:
+                                                req_response = requests.post(
+                                                    f"{API_URL}/api/v1/required-skills/", 
+                                                    json={"job_posting_id": job_id, "skill_id": skill_opts[sel_sk], "required_level": sel_lvl},
+                                                    headers=headers, timeout=10
+                                                )
+                                                if req_response.status_code in (200, 201):
+                                                    st.toast("Requirement added!")
+                                                    st.rerun()
+                                                else:
+                                                    st.error(f"Failed to add: {req_response.text}")
+                                            except Exception as e:
+                                                st.error(f"Error: {e}")
+                                        else:
+                                            st.error("Please select a skill first.")
+                            else:
+                                st.info("All global skills have been assigned to this job.")
                             
                             # Delete button for each job
                             if st.button(f"Delete Job", key=f"delete_job_{job_id}"):

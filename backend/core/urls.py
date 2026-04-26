@@ -7,6 +7,7 @@ from .views import (
     StudentProfileViewSet,
     StudentSkillSetViewSet,
     JobPostingViewSet,
+    RequiredSkillViewSet,
     RoadmapViewSet,
     GenerateRoadmapView,
     CurrentUserView,
@@ -19,6 +20,7 @@ router.register(r"skills", SkillViewSet)
 router.register(r"student-profiles", StudentProfileViewSet)
 router.register(r"student-skill-sets", StudentSkillSetViewSet)
 router.register(r"job-postings", JobPostingViewSet)
+router.register(r"required-skills", RequiredSkillViewSet)
 router.register(r"roadmaps", RoadmapViewSet)
 
 urlpatterns = [

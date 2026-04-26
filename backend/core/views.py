@@ -20,6 +20,7 @@ from .models import (
     JobPosting,
     Roadmap,
     StudentSkillSet,
+    RequiredSkill,
 )
 from .serializers import (
     CustomUserSerializer,
@@ -29,6 +30,7 @@ from .serializers import (
     JobPostingSerializer,
     RoadmapSerializer,
     StudentSkillSetSerializer,
+    RequiredSkillSerializer,
 )
 
 
@@ -173,7 +175,13 @@ class SkillViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.request.method in permissions.SAFE_METHODS:
             return [permissions.IsAuthenticated()]
-        return [permissions.IsAdminUser()]
+        return [permissions.IsAuthenticated()]
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_tpo:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Only TPO users can create skills.")
+        serializer.save()
 
 
 class StudentSkillSetViewSet(viewsets.ModelViewSet):
@@ -268,6 +276,31 @@ class JobPostingViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         if not self.request.user.is_tpo:
             raise PermissionDenied("Only TPO users can delete job postings.")
+        instance.delete()
+
+
+class RequiredSkillViewSet(viewsets.ModelViewSet):
+    queryset = RequiredSkill.objects.select_related("job_posting", "skill")
+    serializer_class = RequiredSkillSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = RequiredSkill.objects.select_related("job_posting", "skill")
+        return queryset
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_tpo:
+            raise PermissionDenied("Only TPO users can add required skills.")
+        serializer.save()
+
+    def perform_update(self, serializer):
+        if not self.request.user.is_tpo:
+            raise PermissionDenied("Only TPO users can update required skills.")
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if not self.request.user.is_tpo:
+            raise PermissionDenied("Only TPO users can delete required skills.")
         instance.delete()
 
 
