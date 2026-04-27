@@ -345,7 +345,14 @@ def init_session_state() -> None:
     if "cookie_checked" not in st.session_state:
         st.session_state["cookie_checked"] = False
 
-    cookie_token = controller.get('acro_token')
+    cookie_token = None
+    try:
+        cookie_token = controller.get('acro_token')
+    except TypeError:
+        # Handle streamlit_cookies_controller returning None for internal cookie cache.
+        cookie_token = None
+    except Exception:
+        cookie_token = None
     
     if cookie_token and not st.session_state.get('logged_in'):
         st.session_state['logged_in'] = True
