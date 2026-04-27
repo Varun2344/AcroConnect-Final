@@ -7,6 +7,10 @@ import plotly.express as px
 import os
 import time
 from datetime import datetime
+from streamlit_cookies_controller import CookieController
+
+# Global controller
+controller = CookieController()
 
 
 
@@ -43,6 +47,11 @@ def _inject_global_styles() -> None:
                 radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.08), transparent 25%),
                 #0f172a; /* Slate 900 */
     color: #f8fafc;
+  }
+
+  /* Hide Streamlit Header */
+  header[data-testid="stHeader"] {
+    display: none !important;
   }
   
   /* Sidebar Styling */
@@ -332,9 +341,36 @@ DEFAULT_SESSION_STATE = {
 
 
 def init_session_state() -> None:
+    # Handle the 1-tick delay of JS cookie loading
+    if "cookie_checked" not in st.session_state:
+        st.session_state["cookie_checked"] = False
+
+    cookie_token = controller.get('acro_token')
+    
+    if cookie_token and not st.session_state.get('logged_in'):
+        st.session_state['logged_in'] = True
+        st.session_state['token'] = cookie_token
+        try:
+            headers = {"Authorization": f"Bearer {cookie_token}"}
+            res = requests.get(f"{API_URL}/api/v1/users/me/", headers=headers, timeout=5)
+            if res.status_code == 200:
+                data = res.json()
+                st.session_state['is_tpo'] = bool(data.get("is_tpo", False))
+                st.session_state['user_email'] = data.get("email") or data.get("username")
+                st.session_state['user_id'] = data.get("id")
+            else:
+                st.session_state['logged_in'] = False
+                st.session_state['token'] = None
+        except Exception:
+            pass
+            
+    elif cookie_token is None and not st.session_state.get('logged_in') and not st.session_state["cookie_checked"]:
+        # Give JS a fraction of a second to send cookies to Python, then force a rerun
+        st.session_state["cookie_checked"] = True
+        time.sleep(0.3)
+        st.rerun()
 
     for key, default in DEFAULT_SESSION_STATE.items():
-
         st.session_state.setdefault(key, default)
 
 
@@ -342,10 +378,12 @@ def init_session_state() -> None:
 
 
 def reset_session_state() -> None:
-
     for key, default in DEFAULT_SESSION_STATE.items():
-
         st.session_state[key] = default
+    try:
+        controller.remove('acro_token')
+    except Exception:
+        pass
 
 
 
@@ -496,10 +534,14 @@ def show_login_page() -> None:
                             st.session_state.user_id = data.get("user_id") or data.get("id")
                             st.session_state.is_tpo = bool(data.get("is_tpo", False))
                     except requests.RequestException:
-                        # Fallback to token response data if /me/ fails
                         st.session_state.user_email = data.get("email") or data.get("username") or (login_identifier if "@" in login_identifier else None)
                         st.session_state.user_id = data.get("user_id") or data.get("id")
                         st.session_state.is_tpo = bool(data.get("is_tpo", False))
+
+                    try:
+                        controller.set('acro_token', str(st.session_state.token))
+                    except Exception:
+                        pass
 
                     st.toast("Login successful!", icon="🔓")
 
@@ -1158,15 +1200,22 @@ def show_tpo_dashboard_page() -> None:
 
     headers = {"Authorization": f"Bearer {token}"}
 
-    st.markdown("""
-        <div style='background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.1)); 
-                    padding: 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);'>
-            <h2 style='margin:0; font-family: "Outfit", sans-serif; color: #f8fafc;'>📊 Advanced TPO Analytics Engine</h2>
-            <p style='margin: 8px 0 0 0; color: #e2e8f0; font-size: 1.05rem; line-height: 1.5;'>
-                Welcome to the central command center for student success. 🎯 Use these real-time analytics to track student readiness, filter by specific tech stacks, and make data-driven decisions to drastically increase campus placement rates.
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
+    col1, col2 = st.columns([5, 1])
+    with col1:
+        st.markdown("""
+            <div style='background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.1)); 
+                        padding: 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);'>
+                <h2 style='margin:0; font-family: "Outfit", sans-serif; color: #f8fafc;'>📊 Advanced TPO Analytics Engine</h2>
+                <p style='margin: 8px 0 0 0; color: #e2e8f0; font-size: 1.05rem; line-height: 1.5;'>
+                    Welcome to the central command center for student success. 🎯 Use these real-time analytics to track student readiness, filter by specific tech stacks, and make data-driven decisions to drastically increase campus placement rates.
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
+    with col2:
+        st.write("") # Spacing to align button vertically
+        st.write("")
+        if st.button("🔄 Refresh Data", use_container_width=True, help="Fetch the latest student data"):
+            st.rerun()
 
     # Fetch all student profiles
     try:
@@ -1644,6 +1693,7 @@ def show_job_management_page() -> None:
     except requests.RequestException as e:
         st.error(f"Error fetching job postings: {e}")
 
+# Removed on_nav_change
 
 
 def show_main_app() -> None:
@@ -1659,40 +1709,18 @@ def show_main_app() -> None:
 
 
     if st.session_state.is_tpo:
-
-        nav_options = ["TPO Dashboard", "Job Management"]
-
+        pg_dash = st.Page(show_tpo_dashboard_page, title="TPO Dashboard", icon="📊")
+        pg_job = st.Page(show_job_management_page, title="Job Management", icon="💼")
+        pg = st.navigation([pg_dash, pg_job])
     else:
+        pg_profile = st.Page(show_profile_page, title="My Profile", icon="👤")
+        pg_roadmap = st.Page(show_roadmap_page, title="AI Roadmap", icon="🗺️")
+        pg_board = st.Page(show_job_board_page, title="Job Board", icon="🏢")
+        pg = st.navigation([pg_profile, pg_roadmap, pg_board])
 
-        nav_options = ["My Profile", "AI Roadmap", "Job Board"]
+    # Run the selected page
+    pg.run()
 
-
-
-    selected_option = st.sidebar.radio(
-
-        "Navigate to:",
-
-        nav_options,
-
-        key="nav_option",
-
-    )
-
-
-
-    # Route to appropriate page based on selection
-    if st.session_state.is_tpo:
-        if selected_option == "TPO Dashboard":
-            show_tpo_dashboard_page()
-        elif selected_option == "Job Management":
-            show_job_management_page()
-    else:
-        if selected_option == "My Profile":
-            show_profile_page()
-        elif selected_option == "AI Roadmap":
-            show_roadmap_page()
-        elif selected_option == "Job Board":
-            show_job_board_page()
 
 
 
