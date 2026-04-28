@@ -85,9 +85,19 @@ class Command(BaseCommand):
             default=100,
             help='Number of students to generate',
         )
+        parser.add_argument(
+            '--if-empty',
+            action='store_true',
+            help='Only generate demo data when no student profiles exist',
+        )
 
     def handle(self, *args, **options):
         count = options['count']
+        only_if_empty = options['if_empty']
+
+        if only_if_empty and StudentProfile.objects.exists():
+            self.stdout.write('Skipping demo generation because student profiles already exist.')
+            return
 
         self.stdout.write(f'Generating {count} realistic student profiles...')
 
@@ -96,18 +106,13 @@ class Command(BaseCommand):
         created_skills = 0
         created_skill_sets = 0
 
-        # Get the next available user ID
-        last_user = User.objects.order_by('-id').first()
-        next_user_id = (last_user.id + 1) if last_user else 1
-
         for i in range(count):
-            # Generate user data
+            # Generate stable demo student data
             name = fake.name()
-            email = fake.email()
-            phone = fake.phone_number()[:10]  # Simplified to 10 digits
+            email = f"demo_student_{i + 1}@example.com"
+            phone = ''.join(str(random.randint(0, 9)) for _ in range(10))
+            username = f"demo_student_{i + 1}"
 
-            # Create user
-            username = email.split('@')[0] + str(next_user_id)
             user, user_created = User.objects.get_or_create(
                 username=username,
                 defaults={
@@ -185,8 +190,6 @@ class Command(BaseCommand):
                 )
                 if skill_set_created:
                     created_skill_sets += 1
-
-            next_user_id += 1
 
         self.stdout.write(
             self.style.SUCCESS(
