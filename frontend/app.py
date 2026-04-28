@@ -7,6 +7,7 @@ import plotly.express as px
 import os
 import time
 from datetime import datetime
+from typing import Optional
 from streamlit_cookies_controller import CookieController
 
 # Global controller
@@ -340,20 +341,25 @@ DEFAULT_SESSION_STATE = {
 
 
 
+def get_cookie_token() -> Optional[str]:
+    cookies = controller.getAll()
+    if cookies is None or not isinstance(cookies, dict):
+        controller.refresh()
+        cookies = controller.getAll()
+
+    if cookies is None or not isinstance(cookies, dict):
+        cookies = {}
+
+    return cookies.get('acro_token')
+
+
 def init_session_state() -> None:
     # Handle the 1-tick delay of JS cookie loading
     if "cookie_checked" not in st.session_state:
         st.session_state["cookie_checked"] = False
 
-    cookie_token = None
-    try:
-        cookie_token = controller.get('acro_token')
-    except TypeError:
-        # Handle streamlit_cookies_controller returning None for internal cookie cache.
-        cookie_token = None
-    except Exception:
-        cookie_token = None
-    
+    cookie_token = get_cookie_token()
+
     if cookie_token and not st.session_state.get('logged_in'):
         st.session_state['logged_in'] = True
         st.session_state['token'] = cookie_token
